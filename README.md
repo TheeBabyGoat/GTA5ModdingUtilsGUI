@@ -131,3 +131,5 @@ The underlying Python logic is unchanged – this GUI only builds the command li
 You can still run gta5-modding-utils purely from the command line; the GUI just makes day-to-day workflows faster and less error-prone.
 
 Credits for the original tool go to the gta5-modding-utils author(s); this project only provides the desktop front-end.
+
+https://github.com/Larcius/gta5-modding-utils

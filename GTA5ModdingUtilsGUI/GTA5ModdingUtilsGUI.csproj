@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<ApplicationIcon>GTA5ModdingUtilsGUI.ico</ApplicationIcon>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- Assembly / file metadata -->
+		<AssemblyTitle>GTA5 Modding Utils GUI</AssemblyTitle>
+		<Company>PulseV</Company>
+		<Product>GTA5 Modding Utils</Product>
+		<Description>GUI front-end for GTA5 Modding Utils.</Description>
+
+		<!-- Versions -->
+		<!-- "Version" is the product/informational version (what you think of as 1.0) -->
+		<Version>1.0</Version>
+		<!-- These are the actual assembly/file versions shown in file properties -->
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+	</PropertyGroup>
+
+	<!--
+    Exclude all C# files from the embedded gta5-modding-utils-main folder
+    from compilation, because they are ScriptHookVDotNet scripts and not part
+    of this WinForms GUI project. We still copy everything as content so that
+    the Python toolchain can use it at runtime.
+  -->
+	<ItemGroup>
+		<Compile Remove="gta5-modding-utils-main\**\*.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="gta5-modding-utils-main\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README-GUI.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+</Project>

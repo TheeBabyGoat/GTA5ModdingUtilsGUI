@@ -8,7 +8,7 @@ Wraps the original main.py from gta5-modding-utils in a simple Windows Forms app
 
 Lets you browse and configure:
 
-Path to your gta5-modding-utils checkout (or use the bundled copy).
+Path to your gta5-modding-utils checkout.
 
 Input folder with .ymap.xml files.
 

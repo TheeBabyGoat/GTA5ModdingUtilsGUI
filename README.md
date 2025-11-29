@@ -2,6 +2,12 @@
 This release ships a Windows desktop front-end for the original gta5-modding-utils Python toolkit.
 Instead of typing long command lines, you can point the GUI at a folder of .ymap.xml files, pick which processing steps to run, and watch the live log output while the Python scripts do the heavy lifting.
 
+<img width="1026" height="752" alt="Main-Menu" src="https://github.com/user-attachments/assets/80a936d7-c238-47c8-ae8c-b3665fef1f4b" />
+<img width="1026" height="752" alt="Main-GUI" src="https://github.com/user-attachments/assets/220d6ec6-856f-4001-9b9e-ffebe6e9bd18" />
+<img width="805" height="582" alt="Custom-Assets" src="https://github.com/user-attachments/assets/ae2666b5-31f1-4c78-af71-775f7186e998" />
+<img width="642" height="232" alt="Credits" src="https://github.com/user-attachments/assets/b084e143-66a1-4d23-8140-a41b25fd564f" />
+
+
 What this GUI does
 
 Wraps the original main.py from gta5-modding-utils in a simple Windows Forms app.

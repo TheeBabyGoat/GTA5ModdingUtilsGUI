@@ -48,7 +48,7 @@ namespace GTA5ModdingUtilsGUI
             this.panelMain.Location = new System.Drawing.Point(0, 0);
             this.panelMain.Name = "panelMain";
             this.panelMain.Padding = new System.Windows.Forms.Padding(24, 24, 24, 16);
-            this.panelMain.Size = new System.Drawing.Size(784, 481);
+            this.panelMain.Size = new System.Drawing.Size(1024, 660);
             this.panelMain.TabIndex = 0;
             // 
             // txtInstructions
@@ -63,7 +63,7 @@ namespace GTA5ModdingUtilsGUI
             this.txtInstructions.Name = "txtInstructions";
             this.txtInstructions.ReadOnly = true;
             this.txtInstructions.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.txtInstructions.Size = new System.Drawing.Size(716, 332);
+            this.txtInstructions.Size = new System.Drawing.Size(950, 480);
             this.txtInstructions.TabIndex = 3;
             this.txtInstructions.TabStop = false;
             this.txtInstructions.Text = 
@@ -85,8 +85,10 @@ namespace GTA5ModdingUtilsGUI
 "   The environment.yml installs required dependencies such as:\n" +
 "   • numpy, scikit-learn, shapely, transforms3d, matplotlib, natsort\n" +
 "   • miniball (via pip)\n" +
-"   As long as you created the environment from environment.yml, you should not\n" +
-"   have to install anything manually.\n" +
+"   • Install glob2 using python -m pip install glob2\n" +
+"   • glob2 is required for in app UV editing\n" +
+"   • REPLACE LodMapCreator.py with the provided edited copy gta5-modding-utils-main\\worker\\lod_map_creator\n" +
+"   • This is needed to allow the JSON file to communicate with the script.\n" +
 "\n" +
 "3. Run the GUI executable\n" +
 "   • Extract the release package to a folder of your choice.\n" +
@@ -94,12 +96,8 @@ namespace GTA5ModdingUtilsGUI
 "     GTA5ModdingUtilsGUI.exe (this is the default layout of the release).\n" +
 "   • Double-click GTA5ModdingUtilsGUI.exe to start the application.\n" +
 "\n" +
-"4. Point the GUI to your Python interpreter\n" +
-"   On the main screen you will see a field \"Python executable (python.exe)\".\n" +
-"   • If your conda environment is currently active and \"python\" on the PATH\n" +
-"     already refers to it, you can leave this field empty.\n" +
-"   • Otherwise, click \"Browse...\" and select the python.exe inside your\n" +
-"     gta5-modding-utils environment (for example in ...\\envs\\gta5-modding-utils).\n" +
+"4. Set gta5-modding-utils to the path of your folder containing the enviorment.\n" +
+"   On the main screen you will see a field \"Gta5-Modding-Utils\".\n" +
 "\n" +
 "5. Choose your input and output folders\n" +
 "   • Input folder: directory containing your .ymap.xml files and related data.\n" +
@@ -214,10 +212,10 @@ namespace GTA5ModdingUtilsGUI
             this.panelBottom.BackColor = System.Drawing.Color.Gainsboro;
             this.panelBottom.Controls.Add(this.btnExit);
             this.panelBottom.Controls.Add(this.btnContinue);
-            this.panelBottom.Location = new System.Drawing.Point(0, 481);
+            this.panelBottom.Location = new System.Drawing.Point(0, 660);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Padding = new System.Windows.Forms.Padding(16, 8, 16, 8);
-            this.panelBottom.Size = new System.Drawing.Size(784, 60);
+            this.panelBottom.Size = new System.Drawing.Size(1024, 60);
             this.panelBottom.TabIndex = 1;
             // 
             // IntroForm
@@ -225,10 +223,10 @@ namespace GTA5ModdingUtilsGUI
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(784, 541);
+            this.ClientSize = new System.Drawing.Size(1024, 720);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.panelMain);
-            this.MinimumSize = new System.Drawing.Size(800, 580);
+            this.MinimumSize = new System.Drawing.Size(1024, 720);
             this.Name = "IntroForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Welcome – GTA5 Modding Utils GUI";

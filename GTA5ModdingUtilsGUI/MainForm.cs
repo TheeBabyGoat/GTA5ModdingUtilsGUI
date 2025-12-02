@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace GTA5ModdingUtilsGUI
@@ -18,12 +17,15 @@ namespace GTA5ModdingUtilsGUI
         private Button? _btnMinimize;
 
         private const int TitleBarHeight = 30;
-
-        [DllImport("user32.dll")]
-        private static extern bool ReleaseCapture();
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+        // Win32 ReleaseCapture removed; stub to maintain compatibility.
+        private static void ReleaseCapture()
+        {
+        }
+        // Win32 SendMessage removed; stub to maintain compatibility.
+        private static IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam)
+        {
+            return IntPtr.Zero;
+        }
 
         private const int WM_NCLBUTTONDOWN = 0xA1;
         private const int HTCAPTION = 0x2;
@@ -50,6 +52,9 @@ namespace GTA5ModdingUtilsGUI
                     }
                 }
             }
+            ApplyTheme(SettingsManager.Current.Theme);
+            ApplySavedToolRoot();
+            AddLogoToUi();
         }
 
 
@@ -92,11 +97,16 @@ namespace GTA5ModdingUtilsGUI
             };
             panel.Controls.Add(lblTitle);
 
-            // Menu strip for Help / Credits
+            // Menu strip for Settings / Help / Credits
             var menu = new MenuStrip
             {
                 AutoSize = true
             };
+
+            // Settings opens the configuration dialog (theme, default paths, etc.)
+            var settingsItem = new ToolStripMenuItem("Settings");
+            settingsItem.Click += settingsToolStripMenuItem_Click;
+
             var helpItem = new ToolStripMenuItem("Help");
             var readmeItem = new ToolStripMenuItem("View Readme");
             readmeItem.Click += viewReadmeToolStripMenuItem_Click;
@@ -105,9 +115,10 @@ namespace GTA5ModdingUtilsGUI
             var creditsItem = new ToolStripMenuItem("Credits");
             creditsItem.Click += creditsToolStripMenuItem_Click;
 
-            // Order: Credits | Help  (closest to standard caption buttons)
-            menu.Items.Add(creditsItem);
+            // Order: Settings | Help | Credits  (closest to standard caption buttons)
+            menu.Items.Add(settingsItem);
             menu.Items.Add(helpItem);
+            menu.Items.Add(creditsItem);
 
             _titleMenuStrip = menu;
             panel.Controls.Add(menu);
@@ -617,6 +628,38 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
+
+        private void settingsToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            using (var dlg = new SettingsForm())
+            {
+                dlg.StartPosition = FormStartPosition.CenterParent;
+                var result = dlg.ShowDialog(this);
+                if (result == DialogResult.OK)
+                {
+                    // Persist settings and apply them to the main window.
+                    SettingsManager.Save();
+
+                    // Apply theme immediately.
+                    ApplyTheme(SettingsManager.Current.Theme);
+
+                    // Update the default gta5-modding-utils path, if valid.
+                    try
+                    {
+                        string? saved = SettingsManager.Current.Gta5ModdingUtilsPath;
+                        if (!string.IsNullOrWhiteSpace(saved) && Directory.Exists(saved))
+                        {
+                            txtPythonPath.Text = saved;
+                        }
+                    }
+                    catch
+                    {
+                        // ignore
+                    }
+                }
+            }
+        }
+
         private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var frm = new CreditsForm())
@@ -649,5 +692,279 @@ namespace GTA5ModdingUtilsGUI
 
             base.WndProc(ref m);
         }
+
+        private void btnOpenOutputDir_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var path = txtOutputDir.Text.Trim();
+                if (string.IsNullOrEmpty(path))
+                {
+                    MessageBox.Show("Output folder is empty. Please select or enter a folder first.",
+                        "Open output folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                if (!System.IO.Directory.Exists(path))
+                {
+                    MessageBox.Show("The specified output folder does not exist yet:\n\n" + path,
+                        "Open output folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = path,
+                    UseShellExecute = true
+                };
+                System.Diagnostics.Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open output folder: " + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
+
+        private AppTheme _currentTheme = AppTheme.DarkTeal;
+
+        private void ApplyTheme(AppTheme theme)
+        {
+            _currentTheme = theme;
+
+            ThemePalette palette = ThemeHelper.GetPalette(theme);
+
+            var windowBack = palette.WindowBack;
+            var groupBack = palette.GroupBack;
+            var inputBack = palette.InputBack;
+            var textColor = palette.TextColor;
+            var accentColor = palette.AccentColor;
+            var secondaryButton = palette.SecondaryButton;
+            var borderColor = palette.BorderColor;
+            var logBack = palette.LogBack;
+            var logText = palette.LogText;
+
+            this.BackColor = windowBack;
+            this.ForeColor = textColor;
+
+            if (menuStrip1 != null)
+            {
+                menuStrip1.BackColor = groupBack;
+                menuStrip1.ForeColor = textColor;
+            }
+
+            if (_titleBarPanel != null)
+            {
+                _titleBarPanel.BackColor = groupBack;
+            }
+
+            if (_titleMenuStrip != null)
+            {
+                _titleMenuStrip.BackColor = groupBack;
+                _titleMenuStrip.ForeColor = textColor;
+            }
+
+            GroupBox[] groups =
+            {
+                grpFeatures,
+                grpAdvanced
+            };
+
+            foreach (var g in groups)
+            {
+                if (g == null) continue;
+                g.BackColor = groupBack;
+                g.ForeColor = textColor;
+            }
+
+            TextBox[] textBoxes =
+            {
+                txtPythonPath,
+                txtInputDir,
+                txtOutputDir,
+                txtPrefix,
+                txtClusteringPrefix,
+                txtClusteringExcluded,
+                txtPolygon
+            };
+
+            foreach (var tb in textBoxes)
+            {
+                if (tb == null) continue;
+                tb.BackColor = inputBack;
+                tb.ForeColor = textColor;
+                tb.BorderStyle = BorderStyle.FixedSingle;
+            }
+
+            NumericUpDown[] numerics = { nudReducerResolution, nudNumClusters };
+            foreach (var nud in numerics)
+            {
+                if (nud == null) continue;
+                nud.BackColor = inputBack;
+                nud.ForeColor = textColor;
+            }
+
+            CheckBox[] steps =
+            {
+                chkVegetation,
+                chkEntropy,
+                chkReducer,
+                chkClustering,
+                chkStaticCol,
+                chkLodMap,
+                chkClearLod,
+                chkReflection,
+                chkSanitizer,
+                chkStatistics
+            };
+
+            foreach (var chk in steps)
+            {
+                if (chk == null) continue;
+                chk.ForeColor = textColor;
+                chk.BackColor = groupBack;
+            }
+
+            if (txtLog != null)
+            {
+                txtLog.BackColor = logBack;
+                txtLog.ForeColor = logText;
+                txtLog.BorderStyle = BorderStyle.FixedSingle;
+            }
+
+            StylePrimaryButton(btnRun, accentColor, textColor, borderColor);
+
+            Button[] secondaryButtons =
+            {
+                btnCancel,
+                btnBrowsePython,
+                btnBrowseInputDir,
+                btnBrowseOutputDir,
+                btnOpenOutputDir,
+                btnLodAtlasHelper
+            };
+
+            foreach (var btn in secondaryButtons)
+            {
+                StyleSecondaryButton(btn, secondaryButton, textColor, borderColor);
+            }
+        }
+
+
+        /// <summary>
+        /// If the user has configured a default gta5-modding-utils location,
+        /// apply it to the main textbox on startup.
+        /// </summary>
+        private void ApplySavedToolRoot()
+        {
+            try
+            {
+                string? saved = SettingsManager.Current.Gta5ModdingUtilsPath;
+                if (!string.IsNullOrWhiteSpace(saved) && Directory.Exists(saved))
+                {
+                    txtPythonPath.Text = saved;
+                }
+            }
+            catch
+            {
+                // Ignore any issues; the user can still set the path manually.
+            }
+        }
+
+        private static void StylePrimaryButton(Button? button, Color backColor, Color foreColor, Color borderColor)
+        {
+            if (button == null) return;
+
+            button.BackColor = backColor;
+            button.ForeColor = foreColor;
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 1;
+            button.FlatAppearance.BorderColor = borderColor;
+        }
+
+        private static void StyleSecondaryButton(Button? button, Color backColor, Color foreColor, Color borderColor)
+        {
+            if (button == null) return;
+
+            button.BackColor = backColor;
+            button.ForeColor = foreColor;
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 1;
+            button.FlatAppearance.BorderColor = borderColor;
+        }
+
+        private void AddLogoToUi()
+        {
+            try
+            {
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string assetsDir = Path.Combine(baseDir, "Assets");
+                string logoPath = Path.Combine(assetsDir, "gta5_modding_utils_logo.png");
+
+                if (!File.Exists(logoPath))
+                {
+                    return;
+                }
+
+                var logo = new PictureBox
+                {
+                    Name = "picLogo",
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Width = 80,
+                    Height = 80,
+                    Anchor = AnchorStyles.Top | AnchorStyles.Right
+                };
+
+                int topInset = (menuStrip1 != null ? menuStrip1.Height : SystemInformation.MenuHeight) + 8;
+                logo.Location = new Point(this.ClientSize.Width - logo.Width - 16, topInset);
+
+                logo.Image = Image.FromFile(logoPath);
+                this.Controls.Add(logo);
+                logo.BringToFront();
+
+                this.Resize += (s, e) =>
+                {
+                    if (!logo.IsDisposed)
+                    {
+                        logo.Left = this.ClientSize.Width - logo.Width - 16;
+                    }
+                };
+            }
+            catch
+            {
+                // If anything goes wrong we just skip showing the logo;
+                // the core functionality of the tool should not be affected.
+            }
+        }
+
+private void btnLodAtlasHelper_Click(object sender, EventArgs e)
+{
+    try
+    {
+        string toolRoot = txtPythonPath.Text.Trim();
+        if (string.IsNullOrEmpty(toolRoot))
+        {
+            string appDir = AppDomain.CurrentDomain.BaseDirectory;
+            string candidate = Path.Combine(appDir, "gta5-modding-utils-main");
+            toolRoot = candidate;
+        }
+
+        string defaultJsonPath = Path.Combine(toolRoot, "lod_custom_candidates.json");
+
+        using (var frm = new LodAtlasHelperForm(toolRoot, defaultJsonPath))
+        {
+            frm.ShowDialog(this);
+        }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show("Failed to open LOD atlas helper: " + ex.Message, "Error",
+            MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+}
+
     }
 }

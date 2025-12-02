@@ -9,6 +9,10 @@ namespace GTA5ModdingUtilsGUI
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+
+            // Load user settings (theme, default tool path, etc.) before any forms are shown.
+            SettingsManager.Load();
+
             Application.Run(new IntroForm());
         }
     }

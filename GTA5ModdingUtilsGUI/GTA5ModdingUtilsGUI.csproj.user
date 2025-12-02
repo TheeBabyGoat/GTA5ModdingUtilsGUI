@@ -8,10 +8,25 @@
     <Compile Update="IntroForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="LodAtlasHelperForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="LodAtlasPreviewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="ReadmeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Rendering\SoftwareMeshViewerControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Rendering\UvEditorControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

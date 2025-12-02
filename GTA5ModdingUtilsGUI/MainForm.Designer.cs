@@ -24,9 +24,12 @@ namespace GTA5ModdingUtilsGUI
         private void InitializeComponent()
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.customAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lodAtlasHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewReadmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblPythonPath = new System.Windows.Forms.Label();
             this.txtPythonPath = new System.Windows.Forms.TextBox();
             this.btnBrowsePython = new System.Windows.Forms.Button();
@@ -36,6 +39,7 @@ namespace GTA5ModdingUtilsGUI
             this.lblOutputDir = new System.Windows.Forms.Label();
             this.txtOutputDir = new System.Windows.Forms.TextBox();
             this.btnBrowseOutputDir = new System.Windows.Forms.Button();
+            this.btnOpenOutputDir = new System.Windows.Forms.Button();
             this.lblPrefix = new System.Windows.Forms.Label();
             this.txtPrefix = new System.Windows.Forms.TextBox();
             this.grpFeatures = new System.Windows.Forms.GroupBox();
@@ -51,6 +55,7 @@ namespace GTA5ModdingUtilsGUI
             this.chkVegetation = new System.Windows.Forms.CheckBox();
             this.grpAdvanced = new System.Windows.Forms.GroupBox();
             this.txtPolygon = new System.Windows.Forms.TextBox();
+            this.btnLodAtlasHelper = new System.Windows.Forms.Button();
             this.lblPolygon = new System.Windows.Forms.Label();
             this.txtClusteringExcluded = new System.Windows.Forms.TextBox();
             this.lblClusteringExcluded = new System.Windows.Forms.Label();
@@ -73,8 +78,10 @@ namespace GTA5ModdingUtilsGUI
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.customAssetsToolStripMenuItem,
+            this.creditsToolStripMenuItem,
             this.helpToolStripMenuItem,
-            this.creditsToolStripMenuItem});
+            this.settingsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(709, 24);
@@ -82,6 +89,21 @@ namespace GTA5ModdingUtilsGUI
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.Dock = System.Windows.Forms.DockStyle.Top;
             // 
+
+            // customAssetsToolStripMenuItem
+            // 
+            this.customAssetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lodAtlasHelperToolStripMenuItem});
+            this.customAssetsToolStripMenuItem.Name = "customAssetsToolStripMenuItem";
+            this.customAssetsToolStripMenuItem.Size = new System.Drawing.Size(104, 20);
+            this.customAssetsToolStripMenuItem.Text = "Custom Assets";
+            // 
+            // lodAtlasHelperToolStripMenuItem
+            // 
+            this.lodAtlasHelperToolStripMenuItem.Name = "lodAtlasHelperToolStripMenuItem";
+            this.lodAtlasHelperToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.lodAtlasHelperToolStripMenuItem.Text = "LOD Atlas Helper...";
+            this.lodAtlasHelperToolStripMenuItem.Click += new System.EventHandler(this.btnLodAtlasHelper_Click);
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -105,6 +127,14 @@ namespace GTA5ModdingUtilsGUI
             this.creditsToolStripMenuItem.Text = "Credits";
             this.creditsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // lblPythonPath
             // 
@@ -192,6 +222,17 @@ namespace GTA5ModdingUtilsGUI
             this.btnBrowseOutputDir.Text = "Browse...";
             this.btnBrowseOutputDir.UseVisualStyleBackColor = true;
             this.btnBrowseOutputDir.Click += new System.EventHandler(this.btnBrowseOutputDir_Click);
+            // 
+            // btnOpenOutputDir
+            // 
+            this.btnOpenOutputDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenOutputDir.Location = new System.Drawing.Point(703, 79);
+            this.btnOpenOutputDir.Name = "btnOpenOutputDir";
+            this.btnOpenOutputDir.Size = new System.Drawing.Size(75, 23);
+            this.btnOpenOutputDir.TabIndex = 9;
+            this.btnOpenOutputDir.Text = "Open";
+            this.btnOpenOutputDir.UseVisualStyleBackColor = true;
+            this.btnOpenOutputDir.Click += new System.EventHandler(this.btnOpenOutputDir_Click);
             // 
             // lblPrefix
             // 
@@ -323,7 +364,7 @@ namespace GTA5ModdingUtilsGUI
             // chkVegetation
             // 
             this.chkVegetation.AutoSize = true;
-            this.chkVegetation.Location = new System.Drawing.Point(17, 22);
+            this.chkVegetation.Location = new System.Drawing.Point(171, 22);
             this.chkVegetation.Name = "chkVegetation";
             this.chkVegetation.Size = new System.Drawing.Size(91, 19);
             this.chkVegetation.TabIndex = 0;
@@ -360,7 +401,18 @@ namespace GTA5ModdingUtilsGUI
             this.txtPolygon.Multiline = true;
             this.txtPolygon.Name = "txtPolygon";
             this.txtPolygon.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtPolygon.Size = new System.Drawing.Size(533, 38);
+            this.txtPolygon.Size = new System.Drawing.Size(408, 38);
+            // 
+            // btnLodAtlasHelper
+            // 
+            this.btnLodAtlasHelper.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLodAtlasHelper.Location = new System.Drawing.Point(554, 104);
+            this.btnLodAtlasHelper.Name = "btnLodAtlasHelper";
+            this.btnLodAtlasHelper.Size = new System.Drawing.Size(119, 23);
+            this.btnLodAtlasHelper.TabIndex = 11;
+            this.btnLodAtlasHelper.Text = "LOD Atlas Helper...";
+            this.btnLodAtlasHelper.UseVisualStyleBackColor = true;
+            this.btnLodAtlasHelper.Click += new System.EventHandler(this.btnLodAtlasHelper_Click);
             this.txtPolygon.TabIndex = 10;
             // 
             // lblPolygon
@@ -507,14 +559,14 @@ namespace GTA5ModdingUtilsGUI
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(685, 163);
+            this.txtLog.Size = new System.Drawing.Size(1000, 260);
             this.txtLog.TabIndex = 15;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(709, 601);
+            this.ClientSize = new System.Drawing.Size(1024, 720);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnRun);
@@ -523,6 +575,7 @@ namespace GTA5ModdingUtilsGUI
             this.Controls.Add(this.txtPrefix);
             this.Controls.Add(this.lblPrefix);
             this.Controls.Add(this.btnBrowseOutputDir);
+            this.Controls.Add(this.btnOpenOutputDir);
             this.Controls.Add(this.txtOutputDir);
             this.Controls.Add(this.lblOutputDir);
             this.Controls.Add(this.btnBrowseInputDir);
@@ -533,7 +586,7 @@ namespace GTA5ModdingUtilsGUI
             this.Controls.Add(this.lblPythonPath);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(725, 640);
+            this.MinimumSize = new System.Drawing.Size(1024, 720);
             this.Name = "MainForm";
             this.Text = "GTA5 Modding Utils GUI";
             this.grpFeatures.ResumeLayout(false);
@@ -558,6 +611,7 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.Label lblOutputDir;
         private System.Windows.Forms.TextBox txtOutputDir;
         private System.Windows.Forms.Button btnBrowseOutputDir;
+        private System.Windows.Forms.Button btnOpenOutputDir;
         private System.Windows.Forms.Label lblPrefix;
         private System.Windows.Forms.TextBox txtPrefix;
         private System.Windows.Forms.GroupBox grpFeatures;
@@ -573,6 +627,7 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.CheckBox chkVegetation;
         private System.Windows.Forms.GroupBox grpAdvanced;
         private System.Windows.Forms.TextBox txtPolygon;
+        private System.Windows.Forms.Button btnLodAtlasHelper;
         private System.Windows.Forms.Label lblPolygon;
         private System.Windows.Forms.TextBox txtClusteringExcluded;
         private System.Windows.Forms.Label lblClusteringExcluded;
@@ -587,8 +642,11 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem customAssetsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem lodAtlasHelperToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewReadmeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }

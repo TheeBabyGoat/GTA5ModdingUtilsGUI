@@ -22,6 +22,7 @@ namespace GTA5ModdingUtilsGUI
             InitializeComponent();
             InitializeTabs();
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            ApplyDarkTheme();
         }
 
         /// <summary>
@@ -208,5 +209,69 @@ namespace GTA5ModdingUtilsGUI
                 txtReadme.SelectionLength = 0;
             }
         }
+
+
+        private void ApplyDarkTheme()
+        {
+            Color windowBack = Color.FromArgb(6, 29, 36);
+            Color pageBack = Color.FromArgb(13, 43, 51);
+            Color textColor = Color.Gainsboro;
+            Color accentColor = Color.FromArgb(0, 168, 135);
+
+            this.BackColor = windowBack;
+            this.ForeColor = textColor;
+
+            if (_tabHelp != null)
+            {
+                _tabHelp.BackColor = windowBack;
+            }
+
+            if (_tabReadme != null)
+            {
+                _tabReadme.BackColor = pageBack;
+            }
+
+            if (_tabCommands != null)
+            {
+                _tabCommands.BackColor = pageBack;
+            }
+
+            if (txtReadme != null)
+            {
+                txtReadme.BackColor = pageBack;
+                txtReadme.ForeColor = textColor;
+            }
+
+            if (_txtCommands != null)
+            {
+                _txtCommands.BackColor = pageBack;
+                _txtCommands.ForeColor = textColor;
+            }
+
+            // Style tab headers by setting the default colors on the control.
+            if (_tabHelp != null)
+            {
+                _tabHelp.DrawMode = TabDrawMode.OwnerDrawFixed;
+                _tabHelp.DrawItem += (s, e) =>
+                {
+                    var tab = _tabHelp.TabPages[e.Index];
+                    var bounds = e.Bounds;
+                    bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+
+                    using var backBrush = new SolidBrush(isSelected ? pageBack : windowBack);
+                    using var textBrush = new SolidBrush(isSelected ? accentColor : textColor);
+
+                    e.Graphics.FillRectangle(backBrush, bounds);
+                    var text = tab.Text;
+                    var format = new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+                    e.Graphics.DrawString(text, this.Font, textBrush, bounds, format);
+                };
+            }
+        }
+
     }
 }

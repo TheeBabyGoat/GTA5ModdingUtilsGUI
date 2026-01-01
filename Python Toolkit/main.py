@@ -21,13 +21,15 @@ PATTERN_MAP_NAME = "[a-z][a-z0-9_]*[a-z0-9]"
 
 
 def moveDirectory(src: str, dest: str):
-    for filename in os.listdir(src):
-        shutil.move(os.path.join(src, filename), dest)
+    if os.path.exists(src):
+        for filename in os.listdir(src):
+            shutil.move(os.path.join(src, filename), dest)
 
 
 def copyDirectory(src: str, dest: str):
-    for filename in os.listdir(src):
-        shutil.copy(os.path.join(src, filename), dest)
+    if os.path.exists(src):
+        for filename in os.listdir(src):
+            shutil.copy(os.path.join(src, filename), dest)
 
 
 def main(argv):
@@ -46,6 +48,8 @@ def main(argv):
     lodMap = False
     clearLod = False
     customMeshesOnly = False
+    # NEW: Variable for custom SLODs
+    customSlods = False
     createReflection = False
     sanitizer = False
     entropy = False
@@ -75,7 +79,7 @@ def main(argv):
         "--clustering=<on|off> --numClusters=<integer> --polygon=<list of x,y coordinates in CCW order> "
         "--clusteringPrefix=<CLUSTERING_PREFIX> --clusteringExcluded=<comma-separated list of ymaps to exclude> "
         "--entropy=<on|off> --sanitizer=<on|off> --staticCol=<on|off> "
-        "--clearLod=<on|off> --lodMap=<on|off> --customMeshesOnly=<on|off> --reflection=<on|off> "
+        "--clearLod=<on|off> --lodMap=<on|off> --customMeshesOnly=<on|off> --customSlods=<on|off> --reflection=<on|off> "
         "--statistics=<on|off> "
         "--lodDistanceCacti=<float> --lodDistanceTrees=<float> "
         "--lodDistanceBushes=<float> --lodDistancePalms=<float> "
@@ -103,6 +107,8 @@ def main(argv):
                 "prefix=",
                 "lodMap=",
                 "customMeshesOnly=",
+                # NEW: Argument parsing
+                "customSlods=",
                 "clearLod=",
                 "reflection=",
                 "sanitizer=",
@@ -168,6 +174,9 @@ def main(argv):
             clearLod = bool(distutils.util.strtobool(arg))
         elif opt == "--customMeshesOnly":
             customMeshesOnly = bool(distutils.util.strtobool(arg))
+        # NEW: Handle the argument
+        elif opt == "--customSlods":
+            customSlods = bool(distutils.util.strtobool(arg))
         elif opt == "--reflection":
             createReflection = bool(distutils.util.strtobool(arg))
         elif opt == "--sanitizer":
@@ -223,8 +232,6 @@ def main(argv):
         print("ERROR: --clusteringExcluded requires --clustering=on")
         sys.exit(2)
 
-    # Build per-category absolute LOD distance overrides dictionary.
-    # Only values > 0 are treated as overrides; 0 means "keep calculated default".
     lodDistanceOverrides = {
         "cacti": lodDistanceCacti,
         "trees": lodDistanceTrees,
@@ -233,7 +240,6 @@ def main(argv):
     }
     lodDistanceOverrides = {k: v for k, v in lodDistanceOverrides.items() if v and v > 0}
 
-    # Legacy (deprecated): build per-category multiplier dictionary.
     lodMultipliers = {
         "cacti": lodMultiplierCacti,
         "trees": lodMultiplierTrees,
@@ -264,7 +270,8 @@ def main(argv):
         print("ERROR: --reducerAdaptScaling=on requires --reducer=on")
         sys.exit(2)
 
-    if not (vegetationCreator or reducer or clustering or staticCol or clearLod or lodMap or customMeshesOnly or sanitizer or entropy or statistics):
+    # NEW: Added customSlods to the goal check
+    if not (vegetationCreator or reducer or clustering or staticCol or clearLod or lodMap or customMeshesOnly or customSlods or sanitizer or entropy or statistics):
         print("ERROR: No goal specified, nothing to do.")
         print(usageMsg)
         sys.exit(2)
@@ -296,7 +303,6 @@ def main(argv):
         print("outputDir " + outputDir + " already exists.")
         clearDirConfirmation = input("Are you sure you want to clear directory " + outputDir +
                                      "?\nWARNING: This irreversibly erases all files within that directory!\nPlease enter yes or no: ")
-        # this if-statement is very important to prevent unintended deletion of a directory
         if clearDirConfirmation == "yes" or clearDirConfirmation == "y":
             shutil.rmtree(outputDir)
         else:
@@ -340,16 +346,28 @@ def main(argv):
 
         nextInputDir = sanitizerWorker.outputDir
 
-
     if customMeshesOnly and not lodMap:
-        # Only generate custom helper meshes, no full LOD maps
         lodMapCreator = LodMapCreator(nextInputDir, os.path.join(tempOutputDir, "lod_map"), prefix, False, False, lodMultipliers=lodMultipliers, lodDistanceOverrides=lodDistanceOverrides)
         lodMapCreator.runCustomMeshesOnly()
 
-        # Move helper custom meshes (if any) to the final output
         outputCustomMeshesDir = os.path.join(outputDir, "custom_meshes")
         os.makedirs(outputCustomMeshesDir, exist_ok=True)
         moveDirectory(lodMapCreator.getOutputDirCustomMeshes(), outputCustomMeshesDir)
+
+    # NEW: Logic for Custom Slods standalone run
+    if customSlods and not lodMap:
+        lodMapCreator = LodMapCreator(nextInputDir, os.path.join(tempOutputDir, "lod_map"), prefix, False, False, lodMultipliers=lodMultipliers, lodDistanceOverrides=lodDistanceOverrides)
+        
+        # Note: You must ensure 'runCustomSlodsOnly' and 'getOutputDirCustomSlods' exist in your LodMapCreator.py
+        if hasattr(lodMapCreator, 'runCustomSlodsOnly'):
+            lodMapCreator.runCustomSlodsOnly()
+            
+            outputCustomSlodsDir = os.path.join(outputDir, "custom_slods")
+            os.makedirs(outputCustomSlodsDir, exist_ok=True)
+            if hasattr(lodMapCreator, 'getOutputDirCustomSlods'):
+                moveDirectory(lodMapCreator.getOutputDirCustomSlods(), outputCustomSlodsDir)
+        else:
+            print("WARNING: runCustomSlodsOnly() not found in LodMapCreator. Skipping Custom Slods generation.")
 
     if clearLod:
         lodMapCleaner = LodMapCreator(nextInputDir, os.path.join(tempOutputDir, "clear_lod"), prefix, True, False, lodMultipliers=lodMultipliers, lodDistanceOverrides=lodDistanceOverrides)
@@ -373,10 +391,16 @@ def main(argv):
         os.makedirs(outputMeshesDir)
         moveDirectory(lodMapCreator.getOutputDirMeshes(False), outputMeshesDir)
 
-        # Move helper custom meshes (if any)
         outputCustomMeshesDir = os.path.join(outputDir, "custom_meshes")
         os.makedirs(outputCustomMeshesDir, exist_ok=True)
         moveDirectory(lodMapCreator.getOutputDirCustomMeshes(), outputCustomMeshesDir)
+
+        # NEW: Ensure custom SLODs are moved if generated during full map creation
+        if customSlods or hasattr(lodMapCreator, 'getOutputDirCustomSlods'):
+             outputCustomSlodsDir = os.path.join(outputDir, "custom_slods")
+             os.makedirs(outputCustomSlodsDir, exist_ok=True)
+             if hasattr(lodMapCreator, 'getOutputDirCustomSlods'):
+                 moveDirectory(lodMapCreator.getOutputDirCustomSlods(), outputCustomSlodsDir)
 
         if createReflection:
             outputReflDir = os.path.join(outputDir, prefix + "_refl")
@@ -412,9 +436,7 @@ def main(argv):
     os.makedirs(outputMetadataDir, exist_ok=True)
     if not os.path.samefile(nextInputDir, inputDir):
         moveDirectory(nextInputDir, outputMetadataDir)
-    # else:
-    #    no need to duplicate the input dir
-    #    copyDirectory(nextInputDir, outputDir + "/maps")
+
     shutil.rmtree(tempOutputDir)
 
     pyplot.show(block=True)

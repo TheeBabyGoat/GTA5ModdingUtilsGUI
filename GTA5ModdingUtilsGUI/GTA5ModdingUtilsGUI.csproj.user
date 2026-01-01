@@ -8,6 +8,9 @@
     <Compile Update="CustomMeshesForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="CustomSlodsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="IntroForm.cs">
       <SubType>Form</SubType>
     </Compile>

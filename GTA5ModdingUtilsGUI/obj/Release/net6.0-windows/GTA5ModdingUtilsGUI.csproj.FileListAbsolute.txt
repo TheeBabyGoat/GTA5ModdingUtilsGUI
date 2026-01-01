@@ -11,6 +11,7 @@ C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\bin\Rele
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\bin\Release\net6.0-windows\GTA5ModdingUtilsGUI.pdb
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.CreditsForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.CustomMeshesForm.resources
+C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.CustomSlodsForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.LodAtlasPreviewForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.MainForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.Rendering.SoftwareMeshViewerControl.resources

@@ -35,16 +35,12 @@ namespace GTA5ModdingUtilsGUI
         private const int HTBOTTOMRIGHT = 17;
 
         // Added fields for custom LOD distance overrides per vegetation category.
-        // These controls will be created in the constructor and allow the user
-        // to specify scaling factors for cacti, trees, bushes and palms. When the
-        // Python script is invoked these values are passed as command line arguments.
         public MainForm()
         {
             InitializeComponent();
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
             InitializeLodMultiplierControls();
-
 
             // Shift all controls down by the menu strip height so nothing overlaps.
             if (menuStrip1 != null)
@@ -62,36 +58,18 @@ namespace GTA5ModdingUtilsGUI
             ApplySavedToolRoot();
             AddLogoToUi();
 
-            // When the "Use original map names" checkbox is toggled, update the
-            // prefix textbox enabled state accordingly.  If no prefix is
-            // required, disable the prefix textbox so the user knows it is
-            // ignored.  Otherwise, re-enable it.
-            // Initialize the enabled state of the prefix textbox based on
-            // whether the "Use original map names" option is checked. The
-            // designer already wires up the CheckedChanged event so we
-            // simply invoke the handler once here to set the initial state.
             if (chkUseOriginalNames != null)
             {
                 chkUseOriginalNames_CheckedChanged(chkUseOriginalNames, EventArgs.Empty);
             }
         }
 
-        /// <summary>
-        /// Create and add controls that allow the user to specify custom LOD distance
-        /// override distances for different vegetation categories. These controls are grouped
-        /// together in a dedicated group box. Default values are 0 (no override).
-        /// </summary>
-
-
         private void InitializeLodMultiplierControls()
         {
-            // Wire up the enable checkbox to toggle the numeric controls.
             if (chkEnableLodMultipliers != null)
             {
                 chkEnableLodMultipliers.CheckedChanged += (s, e) => UpdateLodMultiplierControlState();
             }
-
-            // Apply the initial enabled/disabled state.
             UpdateLodMultiplierControlState();
         }
 
@@ -112,168 +90,10 @@ namespace GTA5ModdingUtilsGUI
                 nudLodMultiplierPalms.Enabled = enabled;
         }
 
-
-
-
         private void BuildCustomTitleBar()
         {
-            // Custom title bar disabled; using standard system title bar.
+            // Custom title bar logic...
             return;
-
-            // Use a custom title bar so we can place Help/Credits next to the app title.
-            this.FormBorderStyle = FormBorderStyle.None;
-
-            var panel = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = TitleBarHeight,
-                BackColor = SystemColors.Control
-            };
-            _titleBarPanel = panel;
-
-            // Icon
-            var iconBox = new PictureBox
-            {
-                Size = new Size(16, 16),
-                Location = new Point(8, 7),
-                SizeMode = PictureBoxSizeMode.StretchImage
-            };
-            if (this.Icon != null)
-            {
-                iconBox.Image = this.Icon.ToBitmap();
-            }
-            panel.Controls.Add(iconBox);
-
-            // Title text
-            var lblTitle = new Label
-            {
-                AutoSize = true,
-                Text = this.Text,
-                Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point),
-                Location = new Point(28, 7)
-            };
-            panel.Controls.Add(lblTitle);
-
-            // Menu strip for Settings / Help / Credits
-            var menu = new MenuStrip
-            {
-                AutoSize = true
-            };
-
-            // Settings opens the configuration dialog (theme, default paths, etc.)
-            var settingsItem = new ToolStripMenuItem("Settings");
-            settingsItem.Click += settingsToolStripMenuItem_Click;
-
-            var helpItem = new ToolStripMenuItem("Help");
-            var tutorialsItem = new ToolStripMenuItem("Tutorials...");
-            tutorialsItem.Click += tutorialsToolStripMenuItem_Click;
-            var sep = new ToolStripSeparator();
-            var readmeItem = new ToolStripMenuItem("View Readme");
-            readmeItem.Click += viewReadmeToolStripMenuItem_Click;
-            helpItem.DropDownItems.Add(tutorialsItem);
-            helpItem.DropDownItems.Add(sep);
-            helpItem.DropDownItems.Add(readmeItem);
-
-            var creditsItem = new ToolStripMenuItem("Credits");
-            creditsItem.Click += creditsToolStripMenuItem_Click;
-
-            // Order: Settings | Help | Credits  (closest to standard caption buttons)
-            menu.Items.Add(settingsItem);
-            menu.Items.Add(helpItem);
-            menu.Items.Add(creditsItem);
-
-            _titleMenuStrip = menu;
-            panel.Controls.Add(menu);
-
-            // Window control buttons
-            _btnClose = new Button
-            {
-                Text = "X",
-                FlatStyle = FlatStyle.Flat,
-                Size = new Size(30, 22)
-            };
-            _btnClose.FlatAppearance.BorderSize = 0;
-            _btnClose.Click += (s, e) => this.Close();
-            panel.Controls.Add(_btnClose);
-
-            _btnMaximize = new Button
-            {
-                Text = "▢",
-                FlatStyle = FlatStyle.Flat,
-                Size = new Size(30, 22)
-            };
-            _btnMaximize.FlatAppearance.BorderSize = 0;
-            _btnMaximize.Click += (s, e) =>
-            {
-                this.WindowState = this.WindowState == FormWindowState.Maximized
-                    ? FormWindowState.Normal
-                    : FormWindowState.Maximized;
-            };
-            panel.Controls.Add(_btnMaximize);
-
-            _btnMinimize = new Button
-            {
-                Text = "_",
-                FlatStyle = FlatStyle.Flat,
-                Size = new Size(30, 22)
-            };
-            _btnMinimize.FlatAppearance.BorderSize = 0;
-            _btnMinimize.Click += (s, e) => this.WindowState = FormWindowState.Minimized;
-            panel.Controls.Add(_btnMinimize);
-
-            // Layout positions when the panel is resized
-            panel.Resize += (s, e) =>
-            {
-                int right = panel.Width - 4;
-
-                if (_btnClose != null)
-                {
-                    _btnClose.Location = new Point(right - _btnClose.Width, 4);
-                    right = _btnClose.Left - 2;
-                }
-
-                if (_btnMaximize != null)
-                {
-                    _btnMaximize.Location = new Point(right - _btnMaximize.Width, 4);
-                    right = _btnMaximize.Left - 2;
-                }
-
-                if (_btnMinimize != null)
-                {
-                    _btnMinimize.Location = new Point(right - _btnMinimize.Width, 4);
-                    right = _btnMinimize.Left - 8;
-                }
-
-                if (_titleMenuStrip != null)
-                {
-                    _titleMenuStrip.Location = new Point(
-                        right - _titleMenuStrip.PreferredSize.Width,
-                        (panel.Height - _titleMenuStrip.Height) / 2);
-                }
-            };
-
-            // Allow dragging the window by the title area
-            panel.MouseDown += TitleBar_MouseDown;
-            lblTitle.MouseDown += TitleBar_MouseDown;
-            iconBox.MouseDown += TitleBar_MouseDown;
-
-            // Insert the panel and push existing controls down
-            this.Controls.Add(panel);
-            panel.BringToFront();
-
-            foreach (Control c in this.Controls)
-            {
-                if (c == panel) continue;
-                c.Top += TitleBarHeight;
-            }
-
-            if (this.MainMenuStrip != null)
-            {
-                this.MainMenuStrip.Visible = false;
-            }
-
-            // Trigger initial layout
-            panel.PerformLayout();
         }
 
         private void TitleBar_MouseDown(object? sender, MouseEventArgs e)
@@ -309,10 +129,6 @@ namespace GTA5ModdingUtilsGUI
                 return;
             }
 
-            // Require a project prefix only when not using original names. If the
-            // user opts to preserve existing ymap names, an empty prefix is
-            // acceptable and will be ignored by the underlying script. Otherwise
-            // enforce a non‑empty prefix.
             if (!useOriginalNames && string.IsNullOrEmpty(prefix))
             {
                 MessageBox.Show("Please provide a prefix for this project.", "Error",
@@ -373,9 +189,6 @@ namespace GTA5ModdingUtilsGUI
 
             if (!string.IsNullOrEmpty(toolRoot))
             {
-                // Allow the user to point at their own gta5-modding-utils checkout.
-                // We accept either the folder that directly contains main.py or a parent
-                // folder that contains a gta5-modding-utils-main subfolder.
                 string candidate1 = Path.Combine(toolRoot, "main.py");
                 string candidate2 = Path.Combine(toolRoot, "gta5-modding-utils-main", "main.py");
 
@@ -401,7 +214,6 @@ namespace GTA5ModdingUtilsGUI
             }
             else
             {
-                // Default: use the bundled gta5-modding-utils-main folder next to the executable.
                 scriptPath = Path.Combine(appDir, "gta5-modding-utils-main", "main.py");
 
                 if (!File.Exists(scriptPath))
@@ -425,14 +237,11 @@ namespace GTA5ModdingUtilsGUI
                 WorkingDirectory = Path.GetDirectoryName(scriptPath) ?? appDir
             };
 
-            // Arguments
             psi.ArgumentList.Add(scriptPath);
             psi.ArgumentList.Add("--inputDir");
             psi.ArgumentList.Add(inputDir);
             psi.ArgumentList.Add("--outputDir");
             psi.ArgumentList.Add(outputDir);
-            // Always supply the prefix argument, even if empty. The script
-            // determines whether to use it based on the useOriginalNames flag.
             psi.ArgumentList.Add("--prefix");
             psi.ArgumentList.Add(prefix);
 
@@ -517,6 +326,12 @@ namespace GTA5ModdingUtilsGUI
                 psi.ArgumentList.Add("--customMeshesOnly");
                 psi.ArgumentList.Add("on");
             }
+			
+			if (chkCustomSlods.Checked)
+            {
+                psi.ArgumentList.Add("--customSlods");
+                psi.ArgumentList.Add("on");
+            }
 
             if (chkClearLod.Checked)
             {
@@ -542,20 +357,11 @@ namespace GTA5ModdingUtilsGUI
                 psi.ArgumentList.Add("on");
             }
 
-            // Indicate whether the tool should operate directly on existing map names.
-            // Pass "on" when the checkbox is checked and "off" otherwise. The
-            // underlying Python script defaults to false when the option is omitted,
-            // but explicitly setting it clarifies intent and makes behaviour
-            // deterministic.
             psi.ArgumentList.Add("--useOriginalNames");
             psi.ArgumentList.Add(useOriginalNames ? "on" : "off");
 
-            // Pass the custom LOD distance overrides to the Python script only when the
-            // feature is enabled in the UI.
             if (chkEnableLodMultipliers != null && chkEnableLodMultipliers.Checked)
             {
-                // Always pass the custom LOD distance overrides to the Python script. The values
-                // are taken from the numeric controls in the LOD Distance Overrides group.
                 if (nudLodMultiplierCacti != null)
                 {
                     psi.ArgumentList.Add("--lodDistanceCacti");
@@ -576,7 +382,6 @@ namespace GTA5ModdingUtilsGUI
                     psi.ArgumentList.Add("--lodDistancePalms");
                     psi.ArgumentList.Add(nudLodMultiplierPalms.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 }
-
             }
 
             try
@@ -693,27 +498,16 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-        /// <summary>
-        /// Event handler for toggling the "Use original map names" option.
-        /// When enabled, the prefix text box is disabled and cleared so that
-        /// the tool operates directly on existing map names without a project
-        /// prefix. When disabled, the prefix text box is re‑enabled to
-        /// accept a new project prefix.
-        /// </summary>
         private void chkUseOriginalNames_CheckedChanged(object? sender, EventArgs e)
         {
-            // Guard against null references since the designer can reinstantiate
-            // controls before this handler is attached.
             if (this.chkUseOriginalNames == null || this.txtPrefix == null)
             {
                 return;
             }
             bool useOriginal = this.chkUseOriginalNames.Checked;
-            // Disable or enable the prefix textbox based on the toggle.
             this.txtPrefix.Enabled = !useOriginal;
             if (useOriginal)
             {
-                // Clear any existing prefix to avoid accidental reuse.
                 this.txtPrefix.Text = string.Empty;
             }
         }
@@ -735,7 +529,6 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-
         private void tutorialsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             try
@@ -752,7 +545,6 @@ namespace GTA5ModdingUtilsGUI
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private void viewReadmeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -791,13 +583,8 @@ namespace GTA5ModdingUtilsGUI
                 var result = dlg.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
-                    // Persist settings and apply them to the main window.
                     SettingsManager.Save();
-
-                    // Apply theme immediately.
                     ApplyTheme(SettingsManager.Current.Theme);
-
-                    // Update the default gta5-modding-utils path, if valid.
                     try
                     {
                         string? saved = SettingsManager.Current.Gta5ModdingUtilsPath;
@@ -822,11 +609,8 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-
         protected override void WndProc(ref Message m)
         {
-            // Enable resizing from the bottom-right corner, since we are using a borderless window
-            // to host a custom title bar.
             if (m.Msg == WM_NCHITTEST)
             {
                 base.WndProc(ref m);
@@ -843,7 +627,6 @@ namespace GTA5ModdingUtilsGUI
                 }
                 return;
             }
-
             base.WndProc(ref m);
         }
 
@@ -859,19 +642,19 @@ namespace GTA5ModdingUtilsGUI
                     return;
                 }
 
-                if (!System.IO.Directory.Exists(path))
+                if (!Directory.Exists(path))
                 {
                     MessageBox.Show("The specified output folder does not exist yet:\n\n" + path,
                         "Open output folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
-                var psi = new System.Diagnostics.ProcessStartInfo
+                var psi = new ProcessStartInfo
                 {
                     FileName = path,
                     UseShellExecute = true
                 };
-                System.Diagnostics.Process.Start(psi);
+                Process.Start(psi);
             }
             catch (Exception ex)
             {
@@ -880,15 +663,11 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-
-
-
         private AppTheme _currentTheme = AppTheme.DarkTeal;
 
         private void ApplyTheme(AppTheme theme)
         {
             _currentTheme = theme;
-
             ThemePalette palette = ThemeHelper.GetPalette(theme);
 
             var windowBack = palette.WindowBack;
@@ -974,7 +753,8 @@ namespace GTA5ModdingUtilsGUI
                 chkReflection,
                 chkSanitizer,
                 chkStatistics,
-                chkEnableLodMultipliers
+                chkEnableLodMultipliers,
+                chkCustomMeshes // Keep this for existing
             };
 
             foreach (var chk in steps)
@@ -993,6 +773,7 @@ namespace GTA5ModdingUtilsGUI
 
             StylePrimaryButton(btnRun, accentColor, textColor, borderColor);
 
+            // Add the new button to this list so it gets styled
             Button[] secondaryButtons =
             {
                 btnCancel,
@@ -1000,6 +781,8 @@ namespace GTA5ModdingUtilsGUI
                 btnBrowseInputDir,
                 btnBrowseOutputDir,
                 btnOpenOutputDir,
+                // Assumes you have created this button in the designer:
+                // btnCustomSlods 
             };
 
             foreach (var btn in secondaryButtons)
@@ -1008,11 +791,6 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-
-        /// <summary>
-        /// If the user has configured a default gta5-modding-utils location,
-        /// apply it to the main textbox on startup.
-        /// </summary>
         private void ApplySavedToolRoot()
         {
             try
@@ -1032,7 +810,6 @@ namespace GTA5ModdingUtilsGUI
         private static void StylePrimaryButton(Button? button, Color backColor, Color foreColor, Color borderColor)
         {
             if (button == null) return;
-
             button.BackColor = backColor;
             button.ForeColor = foreColor;
             button.FlatStyle = FlatStyle.Flat;
@@ -1043,7 +820,6 @@ namespace GTA5ModdingUtilsGUI
         private static void StyleSecondaryButton(Button? button, Color backColor, Color foreColor, Color borderColor)
         {
             if (button == null) return;
-
             button.BackColor = backColor;
             button.ForeColor = foreColor;
             button.FlatStyle = FlatStyle.Flat;
@@ -1090,17 +866,14 @@ namespace GTA5ModdingUtilsGUI
             }
             catch
             {
-                // If anything goes wrong we just skip showing the logo;
-                // the core functionality of the tool should not be affected.
+                // If anything goes wrong we just skip showing the logo.
             }
         }
-
 
         private void preview3DToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-                // Open the preview as a standalone window.
                 string toolRoot = txtPythonPath.Text.Trim();
                 if (string.IsNullOrEmpty(toolRoot))
                 {
@@ -1110,14 +883,10 @@ namespace GTA5ModdingUtilsGUI
                 }
 
                 using var preview = new LodAtlasPreviewForm();
-
-                // Best-effort: populate the mesh dropdown from the tool root folder.
-                // Users can still browse manually if their meshes live elsewhere.
                 if (!string.IsNullOrWhiteSpace(toolRoot) && Directory.Exists(toolRoot))
                 {
                     preview.TryPopulateMeshListFromFolder(toolRoot);
                 }
-
                 preview.ShowDialog(this);
             }
             catch (Exception ex)
@@ -1126,7 +895,6 @@ namespace GTA5ModdingUtilsGUI
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private void convertOdrToObjToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1237,8 +1005,6 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-
-
         private void btnCustomMeshes_Click(object? sender, EventArgs e)
         {
             try
@@ -1261,6 +1027,35 @@ namespace GTA5ModdingUtilsGUI
             catch (Exception ex)
             {
                 MessageBox.Show("Failed to open custom meshes helper: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // NEW: Handler for opening the Custom SLODs form
+        private void btnCustomSlods_Click(object? sender, EventArgs e)
+        {
+            try
+            {
+                string toolRoot = txtPythonPath.Text.Trim();
+                if (string.IsNullOrEmpty(toolRoot))
+                {
+                    string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                    string candidate = Path.Combine(appDir, "gta5-modding-utils-main");
+                    toolRoot = candidate;
+                }
+
+                // Point to custom_slods.json instead of custom_meshes.json
+                string defaultJsonPath = Path.Combine(toolRoot, "custom_slods.json");
+
+                // Initialize the CustomSlodsForm created in the previous step
+                using (var frm = new CustomSlodsForm(toolRoot, defaultJsonPath))
+                {
+                    frm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open Custom SLODs helper: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -1290,15 +1085,12 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-
         private void chkSanitizer_CheckedChanged(object sender, EventArgs e)
         {
-
         }
 
         private void chkCustomMeshes_CheckedChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

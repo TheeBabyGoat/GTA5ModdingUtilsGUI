@@ -26,6 +26,7 @@ namespace GTA5ModdingUtilsGUI
             menuStrip1 = new MenuStrip();
             customAssetsToolStripMenuItem = new ToolStripMenuItem();
             customMeshesToolStripMenuItem = new ToolStripMenuItem();
+            customSlodsToolStripMenuItem = new ToolStripMenuItem();
             textureCreationToolStripMenuItem = new ToolStripMenuItem();
             preview3DToolStripMenuItem = new ToolStripMenuItem();
             creditsToolStripMenuItem = new ToolStripMenuItem();
@@ -53,6 +54,7 @@ namespace GTA5ModdingUtilsGUI
             chkClearLod = new CheckBox();
             chkLodMap = new CheckBox();
             chkCustomMeshes = new CheckBox();
+            chkCustomSlods = new CheckBox();
             chkStaticCol = new CheckBox();
             chkClustering = new CheckBox();
             chkReducer = new CheckBox();
@@ -107,7 +109,7 @@ namespace GTA5ModdingUtilsGUI
             // 
             // customAssetsToolStripMenuItem
             // 
-            customAssetsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { customMeshesToolStripMenuItem, textureCreationToolStripMenuItem });
+            customAssetsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { customMeshesToolStripMenuItem, customSlodsToolStripMenuItem, textureCreationToolStripMenuItem });
             customAssetsToolStripMenuItem.Name = "customAssetsToolStripMenuItem";
             customAssetsToolStripMenuItem.Size = new Size(97, 20);
             customAssetsToolStripMenuItem.Text = "Custom Assets";
@@ -115,14 +117,21 @@ namespace GTA5ModdingUtilsGUI
             // customMeshesToolStripMenuItem
             // 
             customMeshesToolStripMenuItem.Name = "customMeshesToolStripMenuItem";
-            customMeshesToolStripMenuItem.Size = new Size(169, 22);
+            customMeshesToolStripMenuItem.Size = new Size(180, 22);
             customMeshesToolStripMenuItem.Text = "Custom Meshes...";
             customMeshesToolStripMenuItem.Click += btnCustomMeshes_Click;
+            // 
+            // customSlodsToolStripMenuItem
+            // 
+            customSlodsToolStripMenuItem.Name = "customSlodsToolStripMenuItem";
+            customSlodsToolStripMenuItem.Size = new Size(180, 22);
+            customSlodsToolStripMenuItem.Text = "Custom SLODs...";
+            customSlodsToolStripMenuItem.Click += btnCustomSlods_Click;
             // 
             // textureCreationToolStripMenuItem
             // 
             textureCreationToolStripMenuItem.Name = "textureCreationToolStripMenuItem";
-            textureCreationToolStripMenuItem.Size = new Size(169, 22);
+            textureCreationToolStripMenuItem.Size = new Size(180, 22);
             textureCreationToolStripMenuItem.Text = "Texture Creation...";
             textureCreationToolStripMenuItem.Click += textureCreationToolStripMenuItem_Click;
             // 
@@ -296,6 +305,7 @@ namespace GTA5ModdingUtilsGUI
             grpFeatures.Controls.Add(chkClearLod);
             grpFeatures.Controls.Add(chkLodMap);
             grpFeatures.Controls.Add(chkCustomMeshes);
+            grpFeatures.Controls.Add(chkCustomSlods);
             grpFeatures.Controls.Add(chkStaticCol);
             grpFeatures.Controls.Add(chkClustering);
             grpFeatures.Controls.Add(chkReducer);
@@ -311,7 +321,7 @@ namespace GTA5ModdingUtilsGUI
             // chkStatistics
             // 
             chkStatistics.AutoSize = true;
-            chkStatistics.Location = new Point(499, 47);
+            chkStatistics.Location = new Point(515, 47);
             chkStatistics.Name = "chkStatistics";
             chkStatistics.Size = new Size(72, 19);
             chkStatistics.TabIndex = 9;
@@ -321,7 +331,7 @@ namespace GTA5ModdingUtilsGUI
             // chkSanitizer
             // 
             chkSanitizer.AutoSize = true;
-            chkSanitizer.Location = new Point(423, 47);
+            chkSanitizer.Location = new Point(439, 47);
             chkSanitizer.Name = "chkSanitizer";
             chkSanitizer.Size = new Size(70, 19);
             chkSanitizer.TabIndex = 8;
@@ -332,7 +342,7 @@ namespace GTA5ModdingUtilsGUI
             // chkReflection
             // 
             chkReflection.AutoSize = true;
-            chkReflection.Location = new Point(338, 47);
+            chkReflection.Location = new Point(354, 47);
             chkReflection.Name = "chkReflection";
             chkReflection.Size = new Size(79, 19);
             chkReflection.TabIndex = 7;
@@ -342,7 +352,7 @@ namespace GTA5ModdingUtilsGUI
             // chkClearLod
             // 
             chkClearLod.AutoSize = true;
-            chkClearLod.Location = new Point(253, 47);
+            chkClearLod.Location = new Point(269, 47);
             chkClearLod.Name = "chkClearLod";
             chkClearLod.Size = new Size(79, 19);
             chkClearLod.TabIndex = 6;
@@ -352,7 +362,7 @@ namespace GTA5ModdingUtilsGUI
             // chkLodMap
             // 
             chkLodMap.AutoSize = true;
-            chkLodMap.Location = new Point(171, 47);
+            chkLodMap.Location = new Point(187, 47);
             chkLodMap.Name = "chkLodMap";
             chkLodMap.Size = new Size(76, 19);
             chkLodMap.TabIndex = 5;
@@ -362,18 +372,28 @@ namespace GTA5ModdingUtilsGUI
             // chkCustomMeshes
             // 
             chkCustomMeshes.AutoSize = true;
-            chkCustomMeshes.Location = new Point(449, 22);
+            chkCustomMeshes.Location = new Point(413, 22);
             chkCustomMeshes.Name = "chkCustomMeshes";
-            chkCustomMeshes.Size = new Size(111, 19);
+            chkCustomMeshes.Size = new Size(96, 19);
             chkCustomMeshes.TabIndex = 10;
             chkCustomMeshes.Text = "Custom Lods";
             chkCustomMeshes.UseVisualStyleBackColor = true;
             chkCustomMeshes.CheckedChanged += chkCustomMeshes_CheckedChanged;
             // 
+            // chkCustomSlods
+            // 
+            chkCustomSlods.AutoSize = true;
+            chkCustomSlods.Location = new Point(515, 22);
+            chkCustomSlods.Name = "chkCustomSlods";
+            chkCustomSlods.Size = new Size(99, 19);
+            chkCustomSlods.TabIndex = 11;
+            chkCustomSlods.Text = "Custom Slods";
+            chkCustomSlods.UseVisualStyleBackColor = true;
+            // 
             // chkStaticCol
             // 
             chkStaticCol.AutoSize = true;
-            chkStaticCol.Location = new Point(91, 47);
+            chkStaticCol.Location = new Point(107, 47);
             chkStaticCol.Name = "chkStaticCol";
             chkStaticCol.Size = new Size(74, 19);
             chkStaticCol.TabIndex = 4;
@@ -383,7 +403,7 @@ namespace GTA5ModdingUtilsGUI
             // chkClustering
             // 
             chkClustering.AutoSize = true;
-            chkClustering.Location = new Point(353, 22);
+            chkClustering.Location = new Point(327, 22);
             chkClustering.Name = "chkClustering";
             chkClustering.Size = new Size(80, 19);
             chkClustering.TabIndex = 3;
@@ -393,7 +413,7 @@ namespace GTA5ModdingUtilsGUI
             // chkReducer
             // 
             chkReducer.AutoSize = true;
-            chkReducer.Location = new Point(278, 22);
+            chkReducer.Location = new Point(252, 22);
             chkReducer.Name = "chkReducer";
             chkReducer.Size = new Size(69, 19);
             chkReducer.TabIndex = 2;
@@ -403,7 +423,7 @@ namespace GTA5ModdingUtilsGUI
             // chkEntropy
             // 
             chkEntropy.AutoSize = true;
-            chkEntropy.Location = new Point(205, 22);
+            chkEntropy.Location = new Point(179, 22);
             chkEntropy.Name = "chkEntropy";
             chkEntropy.Size = new Size(67, 19);
             chkEntropy.TabIndex = 1;
@@ -413,7 +433,7 @@ namespace GTA5ModdingUtilsGUI
             // chkVegetation
             // 
             chkVegetation.AutoSize = true;
-            chkVegetation.Location = new Point(117, 22);
+            chkVegetation.Location = new Point(91, 22);
             chkVegetation.Name = "chkVegetation";
             chkVegetation.Size = new Size(82, 19);
             chkVegetation.TabIndex = 0;
@@ -762,6 +782,8 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.CheckBox chkEntropy;
         private System.Windows.Forms.CheckBox chkVegetation;
         private System.Windows.Forms.CheckBox chkCustomMeshes;
+        // NEW: Checkbox for Custom SLODs
+        private System.Windows.Forms.CheckBox chkCustomSlods;
         private System.Windows.Forms.GroupBox grpAdvanced;
         private System.Windows.Forms.TextBox txtPolygon;        private System.Windows.Forms.Label lblPolygon;
         private System.Windows.Forms.TextBox txtClusteringExcluded;
@@ -776,13 +798,11 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox txtLog;
-        /// <summary>
-        /// Checkbox for toggling use of original map names.
-        /// </summary>
         private System.Windows.Forms.CheckBox chkUseOriginalNames;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem customAssetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem preview3DToolStripMenuItem;        private System.Windows.Forms.ToolStripMenuItem customMeshesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem customSlodsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem textureCreationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tutorialsToolStripMenuItem;

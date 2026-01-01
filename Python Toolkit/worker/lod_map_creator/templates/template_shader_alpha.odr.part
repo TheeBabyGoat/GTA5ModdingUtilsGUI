@@ -1,0 +1,6 @@
+		alpha.sps
+		{
+			DiffuseSampler ${DIFFUSE_SAMPLER}
+			HardAlphaBlend 0.50000000
+			UseTessellation 0.00000000
+		}

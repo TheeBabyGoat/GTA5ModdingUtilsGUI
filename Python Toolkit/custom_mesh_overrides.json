@@ -1,0 +1,26 @@
+{
+  "cypress_01a": {
+    "obj": "custom_mesh_overrides/cypress_01a.obj",
+    "diffuseSampler": "lod_cypress_01a"
+  },
+  "cypress_01b": {
+    "obj": "custom_mesh_overrides/cypress_01b.obj",
+    "diffuseSampler": "lod_cypress_01b"
+  },
+  "cypress_01c": {
+    "obj": "custom_mesh_overrides/cypress_01c.obj",
+    "diffuseSampler": "lod_cypress_01c"
+  },
+  "cypress_02a": {
+    "obj": "custom_mesh_overrides/cypress_02a.obj",
+    "diffuseSampler": "lod_cypress_02a"
+  },
+  "cypress_02b": {
+    "obj": "custom_mesh_overrides/cypress_02b.obj",
+    "diffuseSampler": "lod_cypress_02b"
+  },
+  "cypress_03a": {
+    "obj": "custom_mesh_overrides/cypress_03a.obj",
+    "diffuseSampler": "lod_cypress_03a"
+  }
+}

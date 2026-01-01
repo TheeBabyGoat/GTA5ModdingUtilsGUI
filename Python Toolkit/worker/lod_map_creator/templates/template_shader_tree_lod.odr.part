@@ -1,0 +1,6 @@
+		trees_lod.sps
+		{
+			DiffuseSampler ${DIFFUSE_SAMPLER}
+			AlphaTest 0.90000000
+			SelfShadowing 0.75000000
+		}

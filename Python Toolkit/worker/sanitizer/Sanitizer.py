@@ -1,0 +1,156 @@
+from re import Match
+from natsort import natsorted
+import numpy as np
+import transforms3d
+from matplotlib import pyplot
+import os
+import re
+
+from common.PlotManager import PlotManager
+from common.Util import Util
+from common.ymap.Flag import Flag
+from common.ymap.LodLevel import LodLevel
+from common.ymap.Ymap import Ymap
+from common.ytyp.YtypItem import YtypItem
+from common.ytyp.YtypParser import YtypParser
+
+
+class Sanitizer:
+    identityQuaternion = [1, -0, -0, -0]
+
+    inputDir: str
+    outputDir: str
+    ytypItems: dict[str, YtypItem]
+    lowercaseYtypItems: dict[str, str]
+    fixedArchetypeNames: set[str]
+
+    def __init__(self, inputDir: str, outputDir: str):
+        self.inputDir = inputDir
+        self.outputDir = outputDir
+        # plotting state
+        self._plot_file_labels = []
+        self._plot_fix_counts = []
+
+    def run(self):
+        print("running sanitizer...")
+        self.createOutputDir()
+        self.readYtypItems()
+        self.processFiles()
+        self.copyOthers()
+        print("sanitizer DONE")
+
+    def createOutputDir(self):
+        if os.path.exists(self.outputDir):
+            raise ValueError("Output dir " + self.outputDir + " must not exist")
+
+        os.makedirs(self.outputDir)
+
+    def readYtypItems(self):
+        self.ytypItems = YtypParser.readYtypDirectory(os.path.join(os.path.dirname(__file__), "..", "..", "resources", "ytyp"))
+        self.lowercaseYtypItems = dict((k.lower(), k) for k, v in self.ytypItems.items())
+
+    def repl(self, match: Match, fixedArchetypeNames: set[str]) -> str:
+        archetypeName = match.group(2).lower()
+
+        if archetypeName.lower() in self.lowercaseYtypItems and archetypeName not in self.ytypItems:
+            fixedArchetypeName = self.lowercaseYtypItems[archetypeName.lower()]
+            fixedArchetypeNames.add("changing archetypeName from " + archetypeName + " to " + fixedArchetypeName)
+        else:
+            fixedArchetypeName = archetypeName
+
+        flags = int(match.group(4))
+        origQuat = [float(match.group(9)), -float(match.group(6)), -float(match.group(7)), -float(match.group(8))]
+
+        rotationQuaternion = np.divide(origQuat, [transforms3d.quaternions.qnorm(origQuat)])
+
+        axangle = transforms3d.quaternions.quat2axangle(rotationQuaternion)
+        rotationQuaternion = transforms3d.quaternions.axangle2quat(axangle[0], axangle[1])
+
+        if np.allclose(rotationQuaternion, origQuat, rtol=0, atol=1e-05):
+            rotationQuaternion = origQuat
+        else:
+            print("\t\tfixed rotation:", origQuat, rotationQuaternion)
+
+        if transforms3d.quaternions.nearly_equivalent(rotationQuaternion, Sanitizer.identityQuaternion, rtol=0, atol=1e-05):
+            rotationQuaternion = Sanitizer.identityQuaternion
+        # do not remove this flag. it is required for dynamic objects as well (even if initially there is no custom orientation)
+        # flags &= ~FLAG_ALLOW_FULL_ROTATION
+        else:
+            # TODO when is it necessary to add this flag? looking at some original rockstar maps only some rotations need this flag
+            flags |= Flag.ALLOW_FULL_ROTATION
+
+        lodLevel = match.group(12)
+        numChildren = int(match.group(14))
+        if lodLevel == LodLevel.HD and numChildren == 0:
+            lodLevel = LodLevel.ORPHAN_HD
+            print("\t\tchanged lodLevel from " + LodLevel.HD + " to " + LodLevel.ORPHAN_HD)
+
+        return match.group(1) + \
+               fixedArchetypeName + \
+               match.group(3) + \
+               str(flags) + \
+               match.group(5) + \
+               'x="' + Util.floatToStr(-rotationQuaternion[1]) + \
+               '" y="' + Util.floatToStr(-rotationQuaternion[2]) + \
+               '" z="' + Util.floatToStr(-rotationQuaternion[3]) + \
+               '" w="' + Util.floatToStr(rotationQuaternion[0]) + '"' + \
+               match.group(10) + Util.floatToStr(0) + \
+               match.group(11) + lodLevel + match.group(13)
+
+    def processFiles(self):
+        for filename in natsorted(os.listdir(self.inputDir)):
+            if filename.endswith(".ymap.xml"):
+                self.processFile(filename)
+
+        # After processing all files, create a small bar chart summarizing fixes per map.
+        if self._plot_file_labels:
+            ax = PlotManager.get_axes("sanitizer", "Sanitizer")
+            pyplot.sca(ax)
+            ax.clear()
+            ax.set_title("Sanitizer – archetype name fixes per map")
+
+            indices = np.arange(len(self._plot_file_labels))
+            ax.bar(indices, self._plot_fix_counts)
+            ax.set_xticks(indices)
+            ax.set_xticklabels(self._plot_file_labels, rotation=90)
+            ax.set_ylabel("Number of fixes")
+            ax.set_xlabel("Map")
+
+    def processFile(self, filename: str):
+        print("\tprocessing " + filename)
+
+        f = open(os.path.join(self.inputDir, filename), 'r')
+        content = f.read()
+        f.close()
+
+        fixedArchetypeNames = set()
+        content_new = re.sub('(<Item type="CEntityDef">' +
+                             '\\s*<archetypeName>)([^<]+)(</archetypeName>' +
+                             '\\s*<flags value=")([^"]+)("\\s*/>' +
+                             '(?:\\s*<[^/].*>)*?' +
+                             '\\s*<rotation )x="([^"]+)" y="([^"]+)" z="([^"]+)" w="([^"]+)"(/>' +
+                             '(?:\\s*<[^/].*>)*?' +
+                             '\\s*<childLodDist value=")[^"]+("/>' +
+                             '\\s*<lodLevel>)([^<]+)(</lodLevel>' +
+                             '\\s*<numChildren value="([^"]+)"/>' +
+                             '(?:\\s*<[^/].*>)*?' +
+                             '\\s*</Item>)', lambda match: self.repl(match, fixedArchetypeNames), content, flags=re.M)
+
+        # record how many archetype name fixes we performed in this file
+        self._plot_file_labels.append(filename.lower())
+        self._plot_fix_counts.append(len(fixedArchetypeNames))
+
+        for fixed in natsorted(fixedArchetypeNames):
+            print("\t\t" + fixed)
+
+        content_new = Ymap.replaceName(content_new, filename.lower()[:-9])
+        content_new = Ymap.calculateAndReplaceLodDistance(content_new, self.ytypItems)
+        content_new = Ymap.fixMapExtents(content_new, self.ytypItems)
+
+        f = open(os.path.join(self.outputDir, filename.lower()), 'w')
+        f.write(content_new)
+        f.close()
+
+    def copyOthers(self):
+        # copy other files
+        Util.copyFiles(self.inputDir, self.outputDir, lambda filename: not filename.endswith(".ymap.xml"))

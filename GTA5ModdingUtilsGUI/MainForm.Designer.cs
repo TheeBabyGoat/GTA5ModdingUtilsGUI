@@ -23,580 +23,716 @@ namespace GTA5ModdingUtilsGUI
 
         private void InitializeComponent()
         {
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.customAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lodAtlasHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewReadmeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lblPythonPath = new System.Windows.Forms.Label();
-            this.txtPythonPath = new System.Windows.Forms.TextBox();
-            this.btnBrowsePython = new System.Windows.Forms.Button();
-            this.lblInputDir = new System.Windows.Forms.Label();
-            this.txtInputDir = new System.Windows.Forms.TextBox();
-            this.btnBrowseInputDir = new System.Windows.Forms.Button();
-            this.lblOutputDir = new System.Windows.Forms.Label();
-            this.txtOutputDir = new System.Windows.Forms.TextBox();
-            this.btnBrowseOutputDir = new System.Windows.Forms.Button();
-            this.btnOpenOutputDir = new System.Windows.Forms.Button();
-            this.lblPrefix = new System.Windows.Forms.Label();
-            this.txtPrefix = new System.Windows.Forms.TextBox();
-            this.grpFeatures = new System.Windows.Forms.GroupBox();
-            this.chkStatistics = new System.Windows.Forms.CheckBox();
-            this.chkSanitizer = new System.Windows.Forms.CheckBox();
-            this.chkReflection = new System.Windows.Forms.CheckBox();
-            this.chkClearLod = new System.Windows.Forms.CheckBox();
-            this.chkLodMap = new System.Windows.Forms.CheckBox();
-            this.chkStaticCol = new System.Windows.Forms.CheckBox();
-            this.chkClustering = new System.Windows.Forms.CheckBox();
-            this.chkReducer = new System.Windows.Forms.CheckBox();
-            this.chkEntropy = new System.Windows.Forms.CheckBox();
-            this.chkVegetation = new System.Windows.Forms.CheckBox();
-            this.grpAdvanced = new System.Windows.Forms.GroupBox();
-            this.txtPolygon = new System.Windows.Forms.TextBox();
-            this.btnLodAtlasHelper = new System.Windows.Forms.Button();
-            this.lblPolygon = new System.Windows.Forms.Label();
-            this.txtClusteringExcluded = new System.Windows.Forms.TextBox();
-            this.lblClusteringExcluded = new System.Windows.Forms.Label();
-            this.txtClusteringPrefix = new System.Windows.Forms.TextBox();
-            this.lblClusteringPrefix = new System.Windows.Forms.Label();
-            this.nudNumClusters = new System.Windows.Forms.NumericUpDown();
-            this.lblNumClusters = new System.Windows.Forms.Label();
-            this.chkReducerAdaptScaling = new System.Windows.Forms.CheckBox();
-            this.nudReducerResolution = new System.Windows.Forms.NumericUpDown();
-            this.lblReducerResolution = new System.Windows.Forms.Label();
-            this.btnRun = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.txtLog = new System.Windows.Forms.TextBox();
-            this.grpFeatures.SuspendLayout();
-            this.grpAdvanced.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudNumClusters)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudReducerResolution)).BeginInit();
-            this.SuspendLayout();
+            menuStrip1 = new MenuStrip();
+            customAssetsToolStripMenuItem = new ToolStripMenuItem();
+            customMeshesToolStripMenuItem = new ToolStripMenuItem();
+            textureCreationToolStripMenuItem = new ToolStripMenuItem();
+            preview3DToolStripMenuItem = new ToolStripMenuItem();
+            creditsToolStripMenuItem = new ToolStripMenuItem();
+            helpToolStripMenuItem = new ToolStripMenuItem();
+            tutorialsToolStripMenuItem = new ToolStripMenuItem();
+            helpToolStripSeparator1 = new ToolStripSeparator();
+            viewReadmeToolStripMenuItem = new ToolStripMenuItem();
+            settingsToolStripMenuItem = new ToolStripMenuItem();
+            lblPythonPath = new Label();
+            txtPythonPath = new TextBox();
+            btnBrowsePython = new Button();
+            lblInputDir = new Label();
+            txtInputDir = new TextBox();
+            btnBrowseInputDir = new Button();
+            lblOutputDir = new Label();
+            txtOutputDir = new TextBox();
+            btnBrowseOutputDir = new Button();
+            btnOpenOutputDir = new Button();
+            lblPrefix = new Label();
+            txtPrefix = new TextBox();
+            grpFeatures = new GroupBox();
+            chkStatistics = new CheckBox();
+            chkSanitizer = new CheckBox();
+            chkReflection = new CheckBox();
+            chkClearLod = new CheckBox();
+            chkLodMap = new CheckBox();
+            chkCustomMeshes = new CheckBox();
+            chkStaticCol = new CheckBox();
+            chkClustering = new CheckBox();
+            chkReducer = new CheckBox();
+            chkEntropy = new CheckBox();
+            chkVegetation = new CheckBox();
+            grpAdvanced = new GroupBox();
+            txtPolygon = new TextBox();
+            lblPolygon = new Label();
+            txtClusteringExcluded = new TextBox();
+            lblClusteringExcluded = new Label();
+            txtClusteringPrefix = new TextBox();
+            lblClusteringPrefix = new Label();
+            nudNumClusters = new NumericUpDown();
+            lblNumClusters = new Label();
+            chkReducerAdaptScaling = new CheckBox();
+            nudReducerResolution = new NumericUpDown();
+            lblReducerResolution = new Label();
+            grpLodMultipliers = new GroupBox();
+            nudLodMultiplierPalms = new NumericUpDown();
+            lblLodPalms = new Label();
+            nudLodMultiplierBushes = new NumericUpDown();
+            lblLodBushes = new Label();
+            nudLodMultiplierTrees = new NumericUpDown();
+            lblLodTrees = new Label();
+            nudLodMultiplierCacti = new NumericUpDown();
+            lblLodCacti = new Label();
+            chkEnableLodMultipliers = new CheckBox();
+            btnRun = new Button();
+            btnCancel = new Button();
+            txtLog = new TextBox();
+            chkUseOriginalNames = new CheckBox();
+            menuStrip1.SuspendLayout();
+            grpFeatures.SuspendLayout();
+            grpAdvanced.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudNumClusters).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudReducerResolution).BeginInit();
+            grpLodMultipliers.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierPalms).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierBushes).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierTrees).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierCacti).BeginInit();
+            SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.customAssetsToolStripMenuItem,
-            this.creditsToolStripMenuItem,
-            this.helpToolStripMenuItem,
-            this.settingsToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(709, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.Top;
+            menuStrip1.Items.AddRange(new ToolStripItem[] { customAssetsToolStripMenuItem, preview3DToolStripMenuItem, creditsToolStripMenuItem, helpToolStripMenuItem, settingsToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(1024, 24);
+            menuStrip1.TabIndex = 0;
+            menuStrip1.Text = "menuStrip1";
             // 
-
             // customAssetsToolStripMenuItem
             // 
-            this.customAssetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lodAtlasHelperToolStripMenuItem});
-            this.customAssetsToolStripMenuItem.Name = "customAssetsToolStripMenuItem";
-            this.customAssetsToolStripMenuItem.Size = new System.Drawing.Size(104, 20);
-            this.customAssetsToolStripMenuItem.Text = "Custom Assets";
+            customAssetsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { customMeshesToolStripMenuItem, textureCreationToolStripMenuItem });
+            customAssetsToolStripMenuItem.Name = "customAssetsToolStripMenuItem";
+            customAssetsToolStripMenuItem.Size = new Size(97, 20);
+            customAssetsToolStripMenuItem.Text = "Custom Assets";
             // 
-            // lodAtlasHelperToolStripMenuItem
+            // customMeshesToolStripMenuItem
             // 
-            this.lodAtlasHelperToolStripMenuItem.Name = "lodAtlasHelperToolStripMenuItem";
-            this.lodAtlasHelperToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
-            this.lodAtlasHelperToolStripMenuItem.Text = "LOD Atlas Helper...";
-            this.lodAtlasHelperToolStripMenuItem.Click += new System.EventHandler(this.btnLodAtlasHelper_Click);
-            // helpToolStripMenuItem
+            customMeshesToolStripMenuItem.Name = "customMeshesToolStripMenuItem";
+            customMeshesToolStripMenuItem.Size = new Size(169, 22);
+            customMeshesToolStripMenuItem.Text = "Custom Meshes...";
+            customMeshesToolStripMenuItem.Click += btnCustomMeshes_Click;
             // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.viewReadmeToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            this.helpToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            // textureCreationToolStripMenuItem
             // 
-            // viewReadmeToolStripMenuItem
+            textureCreationToolStripMenuItem.Name = "textureCreationToolStripMenuItem";
+            textureCreationToolStripMenuItem.Size = new Size(169, 22);
+            textureCreationToolStripMenuItem.Text = "Texture Creation...";
+            textureCreationToolStripMenuItem.Click += textureCreationToolStripMenuItem_Click;
             // 
-            this.viewReadmeToolStripMenuItem.Name = "viewReadmeToolStripMenuItem";
-            this.viewReadmeToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
-            this.viewReadmeToolStripMenuItem.Text = "View Readme";
-            this.viewReadmeToolStripMenuItem.Click += new System.EventHandler(this.viewReadmeToolStripMenuItem_Click);
+            // preview3DToolStripMenuItem
+            // 
+            preview3DToolStripMenuItem.Name = "preview3DToolStripMenuItem";
+            preview3DToolStripMenuItem.Size = new Size(77, 20);
+            preview3DToolStripMenuItem.Text = "3D Preview";
+            preview3DToolStripMenuItem.Click += preview3DToolStripMenuItem_Click;
             // 
             // creditsToolStripMenuItem
             // 
-            this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
-            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
-            this.creditsToolStripMenuItem.Text = "Credits";
-            this.creditsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
+            creditsToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
+            creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
+            creditsToolStripMenuItem.Size = new Size(56, 20);
+            creditsToolStripMenuItem.Text = "Credits";
+            creditsToolStripMenuItem.Click += creditsToolStripMenuItem_Click;
+            // 
+            // helpToolStripMenuItem
+            // 
+            helpToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
+            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { tutorialsToolStripMenuItem, helpToolStripSeparator1, viewReadmeToolStripMenuItem });
+            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            helpToolStripMenuItem.Size = new Size(44, 20);
+            helpToolStripMenuItem.Text = "Help";
+            // 
+            // tutorialsToolStripMenuItem
+            // 
+            tutorialsToolStripMenuItem.Name = "tutorialsToolStripMenuItem";
+            tutorialsToolStripMenuItem.Size = new Size(145, 22);
+            tutorialsToolStripMenuItem.Text = "Tutorials...";
+            tutorialsToolStripMenuItem.Click += tutorialsToolStripMenuItem_Click;
+            // 
+            // helpToolStripSeparator1
+            // 
+            helpToolStripSeparator1.Name = "helpToolStripSeparator1";
+            helpToolStripSeparator1.Size = new Size(142, 6);
+            // 
+            // viewReadmeToolStripMenuItem
+            // 
+            viewReadmeToolStripMenuItem.Name = "viewReadmeToolStripMenuItem";
+            viewReadmeToolStripMenuItem.Size = new Size(145, 22);
+            viewReadmeToolStripMenuItem.Text = "View Readme";
+            viewReadmeToolStripMenuItem.Click += viewReadmeToolStripMenuItem_Click;
             // 
             // settingsToolStripMenuItem
             // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            settingsToolStripMenuItem.Alignment = ToolStripItemAlignment.Right;
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(61, 20);
+            settingsToolStripMenuItem.Text = "Settings";
+            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
             // lblPythonPath
             // 
-            this.lblPythonPath.AutoSize = true;
-            this.lblPythonPath.Location = new System.Drawing.Point(12, 15);
-            this.lblPythonPath.Name = "lblPythonPath";
-            this.lblPythonPath.Size = new System.Drawing.Size(174, 15);
-            this.lblPythonPath.TabIndex = 0;
-            this.lblPythonPath.Text = "Gta5-Modding-Utils:";
+            lblPythonPath.AutoSize = true;
+            lblPythonPath.Location = new Point(12, 38);
+            lblPythonPath.Name = "lblPythonPath";
+            lblPythonPath.Size = new Size(116, 15);
+            lblPythonPath.TabIndex = 0;
+            lblPythonPath.Text = "Gta5-Modding-Utils:";
             // 
             // txtPythonPath
             // 
-            this.txtPythonPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                          | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPythonPath.Location = new System.Drawing.Point(192, 12);
-            this.txtPythonPath.Name = "txtPythonPath";
-            this.txtPythonPath.Size = new System.Drawing.Size(424, 23);
-            this.txtPythonPath.TabIndex = 1;
+            txtPythonPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtPythonPath.Location = new Point(192, 35);
+            txtPythonPath.Name = "txtPythonPath";
+            txtPythonPath.Size = new Size(424, 23);
+            txtPythonPath.TabIndex = 1;
             // 
             // btnBrowsePython
             // 
-            this.btnBrowsePython.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowsePython.Location = new System.Drawing.Point(622, 11);
-            this.btnBrowsePython.Name = "btnBrowsePython";
-            this.btnBrowsePython.Size = new System.Drawing.Size(75, 23);
-            this.btnBrowsePython.TabIndex = 2;
-            this.btnBrowsePython.Text = "Browse...";
-            this.btnBrowsePython.UseVisualStyleBackColor = true;
-            this.btnBrowsePython.Click += new System.EventHandler(this.btnBrowsePython_Click);
+            btnBrowsePython.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnBrowsePython.Location = new Point(622, 34);
+            btnBrowsePython.Name = "btnBrowsePython";
+            btnBrowsePython.Size = new Size(75, 23);
+            btnBrowsePython.TabIndex = 2;
+            btnBrowsePython.Text = "Browse...";
+            btnBrowsePython.UseVisualStyleBackColor = true;
+            btnBrowsePython.Click += btnBrowsePython_Click;
             // 
             // lblInputDir
             // 
-            this.lblInputDir.AutoSize = true;
-            this.lblInputDir.Location = new System.Drawing.Point(12, 49);
-            this.lblInputDir.Name = "lblInputDir";
-            this.lblInputDir.Size = new System.Drawing.Size(76, 15);
-            this.lblInputDir.TabIndex = 3;
-            this.lblInputDir.Text = "Input folder:";
+            lblInputDir.AutoSize = true;
+            lblInputDir.Location = new Point(12, 67);
+            lblInputDir.Name = "lblInputDir";
+            lblInputDir.Size = new Size(72, 15);
+            lblInputDir.TabIndex = 3;
+            lblInputDir.Text = "Input folder:";
             // 
             // txtInputDir
             // 
-            this.txtInputDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtInputDir.Location = new System.Drawing.Point(192, 46);
-            this.txtInputDir.Name = "txtInputDir";
-            this.txtInputDir.Size = new System.Drawing.Size(424, 23);
-            this.txtInputDir.TabIndex = 4;
+            txtInputDir.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtInputDir.Location = new Point(192, 64);
+            txtInputDir.Name = "txtInputDir";
+            txtInputDir.Size = new Size(424, 23);
+            txtInputDir.TabIndex = 4;
             // 
             // btnBrowseInputDir
             // 
-            this.btnBrowseInputDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseInputDir.Location = new System.Drawing.Point(622, 45);
-            this.btnBrowseInputDir.Name = "btnBrowseInputDir";
-            this.btnBrowseInputDir.Size = new System.Drawing.Size(75, 23);
-            this.btnBrowseInputDir.TabIndex = 5;
-            this.btnBrowseInputDir.Text = "Browse...";
-            this.btnBrowseInputDir.UseVisualStyleBackColor = true;
-            this.btnBrowseInputDir.Click += new System.EventHandler(this.btnBrowseInputDir_Click);
+            btnBrowseInputDir.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnBrowseInputDir.Location = new Point(622, 63);
+            btnBrowseInputDir.Name = "btnBrowseInputDir";
+            btnBrowseInputDir.Size = new Size(75, 23);
+            btnBrowseInputDir.TabIndex = 5;
+            btnBrowseInputDir.Text = "Browse...";
+            btnBrowseInputDir.UseVisualStyleBackColor = true;
+            btnBrowseInputDir.Click += btnBrowseInputDir_Click;
             // 
             // lblOutputDir
             // 
-            this.lblOutputDir.AutoSize = true;
-            this.lblOutputDir.Location = new System.Drawing.Point(12, 83);
-            this.lblOutputDir.Name = "lblOutputDir";
-            this.lblOutputDir.Size = new System.Drawing.Size(85, 15);
-            this.lblOutputDir.TabIndex = 6;
-            this.lblOutputDir.Text = "Output folder:";
+            lblOutputDir.AutoSize = true;
+            lblOutputDir.Location = new Point(9, 96);
+            lblOutputDir.Name = "lblOutputDir";
+            lblOutputDir.Size = new Size(82, 15);
+            lblOutputDir.TabIndex = 6;
+            lblOutputDir.Text = "Output folder:";
             // 
             // txtOutputDir
             // 
-            this.txtOutputDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                          | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOutputDir.Location = new System.Drawing.Point(192, 80);
-            this.txtOutputDir.Name = "txtOutputDir";
-            this.txtOutputDir.Size = new System.Drawing.Size(424, 23);
-            this.txtOutputDir.TabIndex = 7;
+            txtOutputDir.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtOutputDir.Location = new Point(192, 93);
+            txtOutputDir.Name = "txtOutputDir";
+            txtOutputDir.Size = new Size(424, 23);
+            txtOutputDir.TabIndex = 7;
             // 
             // btnBrowseOutputDir
             // 
-            this.btnBrowseOutputDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseOutputDir.Location = new System.Drawing.Point(622, 79);
-            this.btnBrowseOutputDir.Name = "btnBrowseOutputDir";
-            this.btnBrowseOutputDir.Size = new System.Drawing.Size(75, 23);
-            this.btnBrowseOutputDir.TabIndex = 8;
-            this.btnBrowseOutputDir.Text = "Browse...";
-            this.btnBrowseOutputDir.UseVisualStyleBackColor = true;
-            this.btnBrowseOutputDir.Click += new System.EventHandler(this.btnBrowseOutputDir_Click);
+            btnBrowseOutputDir.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnBrowseOutputDir.Location = new Point(622, 92);
+            btnBrowseOutputDir.Name = "btnBrowseOutputDir";
+            btnBrowseOutputDir.Size = new Size(75, 23);
+            btnBrowseOutputDir.TabIndex = 8;
+            btnBrowseOutputDir.Text = "Browse...";
+            btnBrowseOutputDir.UseVisualStyleBackColor = true;
+            btnBrowseOutputDir.Click += btnBrowseOutputDir_Click;
             // 
             // btnOpenOutputDir
             // 
-            this.btnOpenOutputDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenOutputDir.Location = new System.Drawing.Point(703, 79);
-            this.btnOpenOutputDir.Name = "btnOpenOutputDir";
-            this.btnOpenOutputDir.Size = new System.Drawing.Size(75, 23);
-            this.btnOpenOutputDir.TabIndex = 9;
-            this.btnOpenOutputDir.Text = "Open";
-            this.btnOpenOutputDir.UseVisualStyleBackColor = true;
-            this.btnOpenOutputDir.Click += new System.EventHandler(this.btnOpenOutputDir_Click);
+            btnOpenOutputDir.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnOpenOutputDir.Location = new Point(703, 92);
+            btnOpenOutputDir.Name = "btnOpenOutputDir";
+            btnOpenOutputDir.Size = new Size(75, 23);
+            btnOpenOutputDir.TabIndex = 9;
+            btnOpenOutputDir.Text = "Open";
+            btnOpenOutputDir.UseVisualStyleBackColor = true;
+            btnOpenOutputDir.Click += btnOpenOutputDir_Click;
             // 
             // lblPrefix
             // 
-            this.lblPrefix.AutoSize = true;
-            this.lblPrefix.Location = new System.Drawing.Point(12, 117);
-            this.lblPrefix.Name = "lblPrefix";
-            this.lblPrefix.Size = new System.Drawing.Size(96, 15);
-            this.lblPrefix.TabIndex = 9;
-            this.lblPrefix.Text = "Project prefix:";
+            lblPrefix.AutoSize = true;
+            lblPrefix.Location = new Point(12, 127);
+            lblPrefix.Name = "lblPrefix";
+            lblPrefix.Size = new Size(79, 15);
+            lblPrefix.TabIndex = 9;
+            lblPrefix.Text = "Project prefix:";
             // 
             // txtPrefix
             // 
-            this.txtPrefix.Location = new System.Drawing.Point(192, 114);
-            this.txtPrefix.Name = "txtPrefix";
-            this.txtPrefix.Size = new System.Drawing.Size(200, 23);
-            this.txtPrefix.TabIndex = 10;
+            txtPrefix.Location = new Point(192, 122);
+            txtPrefix.Name = "txtPrefix";
+            txtPrefix.Size = new Size(200, 23);
+            txtPrefix.TabIndex = 10;
             // 
             // grpFeatures
             // 
-            this.grpFeatures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                          | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpFeatures.Controls.Add(this.chkStatistics);
-            this.grpFeatures.Controls.Add(this.chkSanitizer);
-            this.grpFeatures.Controls.Add(this.chkReflection);
-            this.grpFeatures.Controls.Add(this.chkClearLod);
-            this.grpFeatures.Controls.Add(this.chkLodMap);
-            this.grpFeatures.Controls.Add(this.chkStaticCol);
-            this.grpFeatures.Controls.Add(this.chkClustering);
-            this.grpFeatures.Controls.Add(this.chkReducer);
-            this.grpFeatures.Controls.Add(this.chkEntropy);
-            this.grpFeatures.Controls.Add(this.chkVegetation);
-            this.grpFeatures.Location = new System.Drawing.Point(12, 151);
-            this.grpFeatures.Name = "grpFeatures";
-            this.grpFeatures.Size = new System.Drawing.Size(685, 78);
-            this.grpFeatures.TabIndex = 11;
-            this.grpFeatures.TabStop = false;
-            this.grpFeatures.Text = "Steps to run";
+            grpFeatures.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            grpFeatures.Controls.Add(chkStatistics);
+            grpFeatures.Controls.Add(chkSanitizer);
+            grpFeatures.Controls.Add(chkReflection);
+            grpFeatures.Controls.Add(chkClearLod);
+            grpFeatures.Controls.Add(chkLodMap);
+            grpFeatures.Controls.Add(chkCustomMeshes);
+            grpFeatures.Controls.Add(chkStaticCol);
+            grpFeatures.Controls.Add(chkClustering);
+            grpFeatures.Controls.Add(chkReducer);
+            grpFeatures.Controls.Add(chkEntropy);
+            grpFeatures.Controls.Add(chkVegetation);
+            grpFeatures.Location = new Point(12, 151);
+            grpFeatures.Name = "grpFeatures";
+            grpFeatures.Size = new Size(685, 78);
+            grpFeatures.TabIndex = 11;
+            grpFeatures.TabStop = false;
+            grpFeatures.Text = "Steps to run";
             // 
             // chkStatistics
             // 
-            this.chkStatistics.AutoSize = true;
-            this.chkStatistics.Location = new System.Drawing.Point(545, 47);
-            this.chkStatistics.Name = "chkStatistics";
-            this.chkStatistics.Size = new System.Drawing.Size(77, 19);
-            this.chkStatistics.TabIndex = 9;
-            this.chkStatistics.Text = "Statistics";
-            this.chkStatistics.UseVisualStyleBackColor = true;
+            chkStatistics.AutoSize = true;
+            chkStatistics.Location = new Point(499, 47);
+            chkStatistics.Name = "chkStatistics";
+            chkStatistics.Size = new Size(72, 19);
+            chkStatistics.TabIndex = 9;
+            chkStatistics.Text = "Statistics";
+            chkStatistics.UseVisualStyleBackColor = true;
             // 
             // chkSanitizer
             // 
-            this.chkSanitizer.AutoSize = true;
-            this.chkSanitizer.Location = new System.Drawing.Point(449, 47);
-            this.chkSanitizer.Name = "chkSanitizer";
-            this.chkSanitizer.Size = new System.Drawing.Size(74, 19);
-            this.chkSanitizer.TabIndex = 8;
-            this.chkSanitizer.Text = "Sanitizer";
-            this.chkSanitizer.UseVisualStyleBackColor = true;
+            chkSanitizer.AutoSize = true;
+            chkSanitizer.Location = new Point(423, 47);
+            chkSanitizer.Name = "chkSanitizer";
+            chkSanitizer.Size = new Size(70, 19);
+            chkSanitizer.TabIndex = 8;
+            chkSanitizer.Text = "Sanitizer";
+            chkSanitizer.UseVisualStyleBackColor = true;
+            chkSanitizer.CheckedChanged += chkSanitizer_CheckedChanged;
             // 
             // chkReflection
             // 
-            this.chkReflection.AutoSize = true;
-            this.chkReflection.Location = new System.Drawing.Point(353, 47);
-            this.chkReflection.Name = "chkReflection";
-            this.chkReflection.Size = new System.Drawing.Size(83, 19);
-            this.chkReflection.TabIndex = 7;
-            this.chkReflection.Text = "Reflection";
-            this.chkReflection.UseVisualStyleBackColor = true;
+            chkReflection.AutoSize = true;
+            chkReflection.Location = new Point(338, 47);
+            chkReflection.Name = "chkReflection";
+            chkReflection.Size = new Size(79, 19);
+            chkReflection.TabIndex = 7;
+            chkReflection.Text = "Reflection";
+            chkReflection.UseVisualStyleBackColor = true;
             // 
             // chkClearLod
             // 
-            this.chkClearLod.AutoSize = true;
-            this.chkClearLod.Location = new System.Drawing.Point(257, 47);
-            this.chkClearLod.Name = "chkClearLod";
-            this.chkClearLod.Size = new System.Drawing.Size(78, 19);
-            this.chkClearLod.TabIndex = 6;
-            this.chkClearLod.Text = "Clear LOD";
-            this.chkClearLod.UseVisualStyleBackColor = true;
+            chkClearLod.AutoSize = true;
+            chkClearLod.Location = new Point(253, 47);
+            chkClearLod.Name = "chkClearLod";
+            chkClearLod.Size = new Size(79, 19);
+            chkClearLod.TabIndex = 6;
+            chkClearLod.Text = "Clear LOD";
+            chkClearLod.UseVisualStyleBackColor = true;
             // 
             // chkLodMap
             // 
-            this.chkLodMap.AutoSize = true;
-            this.chkLodMap.Location = new System.Drawing.Point(171, 47);
-            this.chkLodMap.Name = "chkLodMap";
-            this.chkLodMap.Size = new System.Drawing.Size(74, 19);
-            this.chkLodMap.TabIndex = 5;
-            this.chkLodMap.Text = "LOD map";
-            this.chkLodMap.UseVisualStyleBackColor = true;
+            chkLodMap.AutoSize = true;
+            chkLodMap.Location = new Point(171, 47);
+            chkLodMap.Name = "chkLodMap";
+            chkLodMap.Size = new Size(76, 19);
+            chkLodMap.TabIndex = 5;
+            chkLodMap.Text = "LOD map";
+            chkLodMap.UseVisualStyleBackColor = true;
+            // 
+            // chkCustomMeshes
+            // 
+            chkCustomMeshes.AutoSize = true;
+            chkCustomMeshes.Location = new Point(449, 22);
+            chkCustomMeshes.Name = "chkCustomMeshes";
+            chkCustomMeshes.Size = new Size(111, 19);
+            chkCustomMeshes.TabIndex = 10;
+            chkCustomMeshes.Text = "Custom Lods";
+            chkCustomMeshes.UseVisualStyleBackColor = true;
+            chkCustomMeshes.CheckedChanged += chkCustomMeshes_CheckedChanged;
             // 
             // chkStaticCol
             // 
-            this.chkStaticCol.AutoSize = true;
-            this.chkStaticCol.Location = new System.Drawing.Point(85, 47);
-            this.chkStaticCol.Name = "chkStaticCol";
-            this.chkStaticCol.Size = new System.Drawing.Size(75, 19);
-            this.chkStaticCol.TabIndex = 4;
-            this.chkStaticCol.Text = "Static col";
-            this.chkStaticCol.UseVisualStyleBackColor = true;
+            chkStaticCol.AutoSize = true;
+            chkStaticCol.Location = new Point(91, 47);
+            chkStaticCol.Name = "chkStaticCol";
+            chkStaticCol.Size = new Size(74, 19);
+            chkStaticCol.TabIndex = 4;
+            chkStaticCol.Text = "Static col";
+            chkStaticCol.UseVisualStyleBackColor = true;
             // 
             // chkClustering
             // 
-            this.chkClustering.AutoSize = true;
-            this.chkClustering.Location = new System.Drawing.Point(449, 22);
-            this.chkClustering.Name = "chkClustering";
-            this.chkClustering.Size = new System.Drawing.Size(83, 19);
-            this.chkClustering.TabIndex = 3;
-            this.chkClustering.Text = "Clustering";
-            this.chkClustering.UseVisualStyleBackColor = true;
+            chkClustering.AutoSize = true;
+            chkClustering.Location = new Point(353, 22);
+            chkClustering.Name = "chkClustering";
+            chkClustering.Size = new Size(80, 19);
+            chkClustering.TabIndex = 3;
+            chkClustering.Text = "Clustering";
+            chkClustering.UseVisualStyleBackColor = true;
             // 
             // chkReducer
             // 
-            this.chkReducer.AutoSize = true;
-            this.chkReducer.Location = new System.Drawing.Point(353, 22);
-            this.chkReducer.Name = "chkReducer";
-            this.chkReducer.Size = new System.Drawing.Size(71, 19);
-            this.chkReducer.TabIndex = 2;
-            this.chkReducer.Text = "Reducer";
-            this.chkReducer.UseVisualStyleBackColor = true;
+            chkReducer.AutoSize = true;
+            chkReducer.Location = new Point(278, 22);
+            chkReducer.Name = "chkReducer";
+            chkReducer.Size = new Size(69, 19);
+            chkReducer.TabIndex = 2;
+            chkReducer.Text = "Reducer";
+            chkReducer.UseVisualStyleBackColor = true;
             // 
             // chkEntropy
             // 
-            this.chkEntropy.AutoSize = true;
-            this.chkEntropy.Location = new System.Drawing.Point(257, 22);
-            this.chkEntropy.Name = "chkEntropy";
-            this.chkEntropy.Size = new System.Drawing.Size(69, 19);
-            this.chkEntropy.TabIndex = 1;
-            this.chkEntropy.Text = "Entropy";
-            this.chkEntropy.UseVisualStyleBackColor = true;
+            chkEntropy.AutoSize = true;
+            chkEntropy.Location = new Point(205, 22);
+            chkEntropy.Name = "chkEntropy";
+            chkEntropy.Size = new Size(67, 19);
+            chkEntropy.TabIndex = 1;
+            chkEntropy.Text = "Entropy";
+            chkEntropy.UseVisualStyleBackColor = true;
             // 
             // chkVegetation
             // 
-            this.chkVegetation.AutoSize = true;
-            this.chkVegetation.Location = new System.Drawing.Point(171, 22);
-            this.chkVegetation.Name = "chkVegetation";
-            this.chkVegetation.Size = new System.Drawing.Size(91, 19);
-            this.chkVegetation.TabIndex = 0;
-            this.chkVegetation.Text = "Vegetation";
-            this.chkVegetation.UseVisualStyleBackColor = true;
+            chkVegetation.AutoSize = true;
+            chkVegetation.Location = new Point(117, 22);
+            chkVegetation.Name = "chkVegetation";
+            chkVegetation.Size = new Size(82, 19);
+            chkVegetation.TabIndex = 0;
+            chkVegetation.Text = "Vegetation";
+            chkVegetation.UseVisualStyleBackColor = true;
             // 
             // grpAdvanced
             // 
-            this.grpAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                          | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpAdvanced.Controls.Add(this.txtPolygon);
-            this.grpAdvanced.Controls.Add(this.lblPolygon);
-            this.grpAdvanced.Controls.Add(this.txtClusteringExcluded);
-            this.grpAdvanced.Controls.Add(this.lblClusteringExcluded);
-            this.grpAdvanced.Controls.Add(this.txtClusteringPrefix);
-            this.grpAdvanced.Controls.Add(this.lblClusteringPrefix);
-            this.grpAdvanced.Controls.Add(this.nudNumClusters);
-            this.grpAdvanced.Controls.Add(this.lblNumClusters);
-            this.grpAdvanced.Controls.Add(this.chkReducerAdaptScaling);
-            this.grpAdvanced.Controls.Add(this.nudReducerResolution);
-            this.grpAdvanced.Controls.Add(this.lblReducerResolution);
-            this.grpAdvanced.Location = new System.Drawing.Point(12, 235);
-            this.grpAdvanced.Name = "grpAdvanced";
-            this.grpAdvanced.Size = new System.Drawing.Size(685, 152);
-            this.grpAdvanced.TabIndex = 12;
-            this.grpAdvanced.TabStop = false;
-            this.grpAdvanced.Text = "Advanced options";
+            grpAdvanced.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            grpAdvanced.Controls.Add(txtPolygon);
+            grpAdvanced.Controls.Add(lblPolygon);
+            grpAdvanced.Controls.Add(txtClusteringExcluded);
+            grpAdvanced.Controls.Add(lblClusteringExcluded);
+            grpAdvanced.Controls.Add(txtClusteringPrefix);
+            grpAdvanced.Controls.Add(lblClusteringPrefix);
+            grpAdvanced.Controls.Add(nudNumClusters);
+            grpAdvanced.Controls.Add(lblNumClusters);
+            grpAdvanced.Controls.Add(chkReducerAdaptScaling);
+            grpAdvanced.Controls.Add(nudReducerResolution);
+            grpAdvanced.Controls.Add(lblReducerResolution);
+            grpAdvanced.Location = new Point(12, 235);
+            grpAdvanced.Name = "grpAdvanced";
+            grpAdvanced.Size = new Size(685, 152);
+            grpAdvanced.TabIndex = 12;
+            grpAdvanced.TabStop = false;
+            grpAdvanced.Text = "Advanced options";
             // 
             // txtPolygon
             // 
-            this.txtPolygon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPolygon.Location = new System.Drawing.Point(140, 104);
-            this.txtPolygon.Multiline = true;
-            this.txtPolygon.Name = "txtPolygon";
-            this.txtPolygon.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtPolygon.Size = new System.Drawing.Size(408, 38);
-            // 
-            // btnLodAtlasHelper
-            // 
-            this.btnLodAtlasHelper.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLodAtlasHelper.Location = new System.Drawing.Point(554, 104);
-            this.btnLodAtlasHelper.Name = "btnLodAtlasHelper";
-            this.btnLodAtlasHelper.Size = new System.Drawing.Size(119, 23);
-            this.btnLodAtlasHelper.TabIndex = 11;
-            this.btnLodAtlasHelper.Text = "LOD Atlas Helper...";
-            this.btnLodAtlasHelper.UseVisualStyleBackColor = true;
-            this.btnLodAtlasHelper.Click += new System.EventHandler(this.btnLodAtlasHelper_Click);
-            this.txtPolygon.TabIndex = 10;
+            txtPolygon.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtPolygon.Location = new Point(140, 104);
+            txtPolygon.Multiline = true;
+            txtPolygon.Name = "txtPolygon";
+            txtPolygon.ScrollBars = ScrollBars.Vertical;
+            txtPolygon.Size = new Size(408, 38);
+            txtPolygon.TabIndex = 10;
             // 
             // lblPolygon
             // 
-            this.lblPolygon.AutoSize = true;
-            this.lblPolygon.Location = new System.Drawing.Point(14, 107);
-            this.lblPolygon.Name = "lblPolygon";
-            this.lblPolygon.Size = new System.Drawing.Size(114, 15);
-            this.lblPolygon.TabIndex = 9;
-            this.lblPolygon.Text = "Polygon (JSON list):";
+            lblPolygon.AutoSize = true;
+            lblPolygon.Location = new Point(14, 107);
+            lblPolygon.Name = "lblPolygon";
+            lblPolygon.Size = new Size(111, 15);
+            lblPolygon.TabIndex = 9;
+            lblPolygon.Text = "Polygon (JSON list):";
             // 
             // txtClusteringExcluded
             // 
-            this.txtClusteringExcluded.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                                    | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtClusteringExcluded.Location = new System.Drawing.Point(486, 63);
-            this.txtClusteringExcluded.Name = "txtClusteringExcluded";
-            this.txtClusteringExcluded.Size = new System.Drawing.Size(187, 23);
-            this.txtClusteringExcluded.TabIndex = 8;
+            txtClusteringExcluded.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtClusteringExcluded.Location = new Point(486, 63);
+            txtClusteringExcluded.Name = "txtClusteringExcluded";
+            txtClusteringExcluded.Size = new Size(187, 23);
+            txtClusteringExcluded.TabIndex = 8;
             // 
             // lblClusteringExcluded
             // 
-            this.lblClusteringExcluded.AutoSize = true;
-            this.lblClusteringExcluded.Location = new System.Drawing.Point(343, 66);
-            this.lblClusteringExcluded.Name = "lblClusteringExcluded";
-            this.lblClusteringExcluded.Size = new System.Drawing.Size(137, 15);
-            this.lblClusteringExcluded.TabIndex = 7;
-            this.lblClusteringExcluded.Text = "Excluded maps (comma):";
+            lblClusteringExcluded.AutoSize = true;
+            lblClusteringExcluded.Location = new Point(343, 66);
+            lblClusteringExcluded.Name = "lblClusteringExcluded";
+            lblClusteringExcluded.Size = new Size(141, 15);
+            lblClusteringExcluded.TabIndex = 7;
+            lblClusteringExcluded.Text = "Excluded maps (comma):";
             // 
             // txtClusteringPrefix
             // 
-            this.txtClusteringPrefix.Location = new System.Drawing.Point(140, 63);
-            this.txtClusteringPrefix.Name = "txtClusteringPrefix";
-            this.txtClusteringPrefix.Size = new System.Drawing.Size(187, 23);
-            this.txtClusteringPrefix.TabIndex = 6;
+            txtClusteringPrefix.Location = new Point(140, 63);
+            txtClusteringPrefix.Name = "txtClusteringPrefix";
+            txtClusteringPrefix.Size = new Size(187, 23);
+            txtClusteringPrefix.TabIndex = 6;
             // 
             // lblClusteringPrefix
             // 
-            this.lblClusteringPrefix.AutoSize = true;
-            this.lblClusteringPrefix.Location = new System.Drawing.Point(14, 66);
-            this.lblClusteringPrefix.Name = "lblClusteringPrefix";
-            this.lblClusteringPrefix.Size = new System.Drawing.Size(102, 15);
-            this.lblClusteringPrefix.TabIndex = 5;
-            this.lblClusteringPrefix.Text = "Clustering prefix:";
+            lblClusteringPrefix.AutoSize = true;
+            lblClusteringPrefix.Location = new Point(14, 66);
+            lblClusteringPrefix.Name = "lblClusteringPrefix";
+            lblClusteringPrefix.Size = new Size(96, 15);
+            lblClusteringPrefix.TabIndex = 5;
+            lblClusteringPrefix.Text = "Clustering prefix:";
             // 
             // nudNumClusters
             // 
-            this.nudNumClusters.Location = new System.Drawing.Point(486, 24);
-            this.nudNumClusters.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudNumClusters.Name = "nudNumClusters";
-            this.nudNumClusters.Size = new System.Drawing.Size(80, 23);
-            this.nudNumClusters.TabIndex = 4;
+            nudNumClusters.Location = new Point(486, 24);
+            nudNumClusters.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudNumClusters.Name = "nudNumClusters";
+            nudNumClusters.Size = new Size(80, 23);
+            nudNumClusters.TabIndex = 4;
             // 
             // lblNumClusters
             // 
-            this.lblNumClusters.AutoSize = true;
-            this.lblNumClusters.Location = new System.Drawing.Point(343, 26);
-            this.lblNumClusters.Name = "lblNumClusters";
-            this.lblNumClusters.Size = new System.Drawing.Size(123, 15);
-            this.lblNumClusters.TabIndex = 3;
-            this.lblNumClusters.Text = "Number of clusters:";
+            lblNumClusters.AutoSize = true;
+            lblNumClusters.Location = new Point(343, 26);
+            lblNumClusters.Name = "lblNumClusters";
+            lblNumClusters.Size = new Size(111, 15);
+            lblNumClusters.TabIndex = 3;
+            lblNumClusters.Text = "Number of clusters:";
             // 
             // chkReducerAdaptScaling
             // 
-            this.chkReducerAdaptScaling.AutoSize = true;
-            this.chkReducerAdaptScaling.Location = new System.Drawing.Point(226, 25);
-            this.chkReducerAdaptScaling.Name = "chkReducerAdaptScaling";
-            this.chkReducerAdaptScaling.Size = new System.Drawing.Size(100, 19);
-            this.chkReducerAdaptScaling.TabIndex = 2;
-            this.chkReducerAdaptScaling.Text = "Adapt scaling";
-            this.chkReducerAdaptScaling.UseVisualStyleBackColor = true;
+            chkReducerAdaptScaling.AutoSize = true;
+            chkReducerAdaptScaling.Location = new Point(226, 25);
+            chkReducerAdaptScaling.Name = "chkReducerAdaptScaling";
+            chkReducerAdaptScaling.Size = new Size(98, 19);
+            chkReducerAdaptScaling.TabIndex = 2;
+            chkReducerAdaptScaling.Text = "Adapt scaling";
+            chkReducerAdaptScaling.UseVisualStyleBackColor = true;
             // 
             // nudReducerResolution
             // 
-            this.nudReducerResolution.DecimalPlaces = 1;
-            this.nudReducerResolution.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            65536});
-            this.nudReducerResolution.Location = new System.Drawing.Point(140, 24);
-            this.nudReducerResolution.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudReducerResolution.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudReducerResolution.Name = "nudReducerResolution";
-            this.nudReducerResolution.Size = new System.Drawing.Size(72, 23);
-            this.nudReducerResolution.TabIndex = 1;
-            this.nudReducerResolution.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
+            nudReducerResolution.DecimalPlaces = 1;
+            nudReducerResolution.Increment = new decimal(new int[] { 5, 0, 0, 65536 });
+            nudReducerResolution.Location = new Point(140, 24);
+            nudReducerResolution.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudReducerResolution.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudReducerResolution.Name = "nudReducerResolution";
+            nudReducerResolution.Size = new Size(72, 23);
+            nudReducerResolution.TabIndex = 1;
+            nudReducerResolution.Value = new decimal(new int[] { 30, 0, 0, 0 });
             // 
             // lblReducerResolution
             // 
-            this.lblReducerResolution.AutoSize = true;
-            this.lblReducerResolution.Location = new System.Drawing.Point(14, 26);
-            this.lblReducerResolution.Name = "lblReducerResolution";
-            this.lblReducerResolution.Size = new System.Drawing.Size(113, 15);
-            this.lblReducerResolution.TabIndex = 0;
-            this.lblReducerResolution.Text = "Reducer resolution:";
+            lblReducerResolution.AutoSize = true;
+            lblReducerResolution.Location = new Point(14, 26);
+            lblReducerResolution.Name = "lblReducerResolution";
+            lblReducerResolution.Size = new Size(109, 15);
+            lblReducerResolution.TabIndex = 0;
+            lblReducerResolution.Text = "Reducer resolution:";
+            // 
+            // grpLodMultipliers
+            // 
+            grpLodMultipliers.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            grpLodMultipliers.Controls.Add(nudLodMultiplierPalms);
+            grpLodMultipliers.Controls.Add(lblLodPalms);
+            grpLodMultipliers.Controls.Add(nudLodMultiplierBushes);
+            grpLodMultipliers.Controls.Add(lblLodBushes);
+            grpLodMultipliers.Controls.Add(nudLodMultiplierTrees);
+            grpLodMultipliers.Controls.Add(lblLodTrees);
+            grpLodMultipliers.Controls.Add(nudLodMultiplierCacti);
+            grpLodMultipliers.Controls.Add(lblLodCacti);
+            grpLodMultipliers.Controls.Add(chkEnableLodMultipliers);
+            grpLodMultipliers.Location = new Point(707, 163);
+            grpLodMultipliers.Name = "grpLodMultipliers";
+            grpLodMultipliers.Size = new Size(305, 224);
+            grpLodMultipliers.TabIndex = 20;
+            grpLodMultipliers.TabStop = false;
+            grpLodMultipliers.Text = "LOD Distance Overrides";
+            // 
+            // nudLodMultiplierPalms
+            // 
+            nudLodMultiplierPalms.Increment = new decimal(new int[] { 10, 0, 0, 0 });
+            nudLodMultiplierPalms.Location = new Point(140, 136);
+            nudLodMultiplierPalms.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            nudLodMultiplierPalms.Name = "nudLodMultiplierPalms";
+            nudLodMultiplierPalms.Size = new Size(80, 23);
+            nudLodMultiplierPalms.TabIndex = 8;
+            // 
+            // lblLodPalms
+            // 
+            lblLodPalms.AutoSize = true;
+            lblLodPalms.Location = new Point(14, 138);
+            lblLodPalms.Name = "lblLodPalms";
+            lblLodPalms.Size = new Size(42, 15);
+            lblLodPalms.TabIndex = 7;
+            lblLodPalms.Text = "Palms:";
+            // 
+            // nudLodMultiplierBushes
+            // 
+            nudLodMultiplierBushes.Increment = new decimal(new int[] { 10, 0, 0, 0 });
+            nudLodMultiplierBushes.Location = new Point(140, 106);
+            nudLodMultiplierBushes.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            nudLodMultiplierBushes.Name = "nudLodMultiplierBushes";
+            nudLodMultiplierBushes.Size = new Size(80, 23);
+            nudLodMultiplierBushes.TabIndex = 6;
+            // 
+            // lblLodBushes
+            // 
+            lblLodBushes.AutoSize = true;
+            lblLodBushes.Location = new Point(14, 108);
+            lblLodBushes.Name = "lblLodBushes";
+            lblLodBushes.Size = new Size(47, 15);
+            lblLodBushes.TabIndex = 5;
+            lblLodBushes.Text = "Bushes:";
+            // 
+            // nudLodMultiplierTrees
+            // 
+            nudLodMultiplierTrees.Increment = new decimal(new int[] { 10, 0, 0, 0 });
+            nudLodMultiplierTrees.Location = new Point(140, 76);
+            nudLodMultiplierTrees.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            nudLodMultiplierTrees.Name = "nudLodMultiplierTrees";
+            nudLodMultiplierTrees.Size = new Size(80, 23);
+            nudLodMultiplierTrees.TabIndex = 4;
+            // 
+            // lblLodTrees
+            // 
+            lblLodTrees.AutoSize = true;
+            lblLodTrees.Location = new Point(14, 78);
+            lblLodTrees.Name = "lblLodTrees";
+            lblLodTrees.Size = new Size(37, 15);
+            lblLodTrees.TabIndex = 3;
+            lblLodTrees.Text = "Trees:";
+            // 
+            // nudLodMultiplierCacti
+            // 
+            nudLodMultiplierCacti.Increment = new decimal(new int[] { 10, 0, 0, 0 });
+            nudLodMultiplierCacti.Location = new Point(140, 46);
+            nudLodMultiplierCacti.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            nudLodMultiplierCacti.Name = "nudLodMultiplierCacti";
+            nudLodMultiplierCacti.Size = new Size(80, 23);
+            nudLodMultiplierCacti.TabIndex = 2;
+            // 
+            // lblLodCacti
+            // 
+            lblLodCacti.AutoSize = true;
+            lblLodCacti.Location = new Point(14, 48);
+            lblLodCacti.Name = "lblLodCacti";
+            lblLodCacti.Size = new Size(37, 15);
+            lblLodCacti.TabIndex = 1;
+            lblLodCacti.Text = "Cacti:";
+            // 
+            // chkEnableLodMultipliers
+            // 
+            chkEnableLodMultipliers.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            chkEnableLodMultipliers.AutoSize = true;
+            chkEnableLodMultipliers.Location = new Point(220, 22);
+            chkEnableLodMultipliers.Name = "chkEnableLodMultipliers";
+            chkEnableLodMultipliers.Size = new Size(61, 19);
+            chkEnableLodMultipliers.TabIndex = 0;
+            chkEnableLodMultipliers.Text = "Enable";
+            chkEnableLodMultipliers.UseVisualStyleBackColor = true;
             // 
             // btnRun
             // 
-            this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(541, 393);
-            this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(75, 27);
-            this.btnRun.TabIndex = 13;
-            this.btnRun.Text = "Run";
-            this.btnRun.UseVisualStyleBackColor = true;
-            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            btnRun.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnRun.Location = new Point(541, 393);
+            btnRun.Name = "btnRun";
+            btnRun.Size = new Size(75, 27);
+            btnRun.TabIndex = 13;
+            btnRun.Text = "Run";
+            btnRun.UseVisualStyleBackColor = true;
+            btnRun.Click += btnRun_Click;
             // 
             // btnCancel
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Enabled = false;
-            this.btnCancel.Location = new System.Drawing.Point(622, 393);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 27);
-            this.btnCancel.TabIndex = 14;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnCancel.Enabled = false;
+            btnCancel.Location = new Point(622, 393);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(75, 27);
+            btnCancel.TabIndex = 14;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
             // 
             // txtLog
             // 
-            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-                                                                       | System.Windows.Forms.AnchorStyles.Left) 
-                                                                      | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Location = new System.Drawing.Point(12, 426);
-            this.txtLog.Multiline = true;
-            this.txtLog.Name = "txtLog";
-            this.txtLog.ReadOnly = true;
-            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(1000, 260);
-            this.txtLog.TabIndex = 15;
+            txtLog.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtLog.Location = new Point(12, 426);
+            txtLog.Multiline = true;
+            txtLog.Name = "txtLog";
+            txtLog.ReadOnly = true;
+            txtLog.ScrollBars = ScrollBars.Vertical;
+            txtLog.Size = new Size(1000, 260);
+            txtLog.TabIndex = 15;
+            // 
+            // chkUseOriginalNames
+            // 
+            chkUseOriginalNames.AutoSize = true;
+            chkUseOriginalNames.Location = new Point(406, 126);
+            chkUseOriginalNames.Name = "chkUseOriginalNames";
+            chkUseOriginalNames.Size = new Size(210, 19);
+            chkUseOriginalNames.TabIndex = 11;
+            chkUseOriginalNames.Text = "Use original map names (no prefix)";
+            chkUseOriginalNames.UseVisualStyleBackColor = true;
+            chkUseOriginalNames.CheckedChanged += chkUseOriginalNames_CheckedChanged;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1024, 720);
-            this.Controls.Add(this.txtLog);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnRun);
-            this.Controls.Add(this.grpAdvanced);
-            this.Controls.Add(this.grpFeatures);
-            this.Controls.Add(this.txtPrefix);
-            this.Controls.Add(this.lblPrefix);
-            this.Controls.Add(this.btnBrowseOutputDir);
-            this.Controls.Add(this.btnOpenOutputDir);
-            this.Controls.Add(this.txtOutputDir);
-            this.Controls.Add(this.lblOutputDir);
-            this.Controls.Add(this.btnBrowseInputDir);
-            this.Controls.Add(this.txtInputDir);
-            this.Controls.Add(this.lblInputDir);
-            this.Controls.Add(this.btnBrowsePython);
-            this.Controls.Add(this.txtPythonPath);
-            this.Controls.Add(this.lblPythonPath);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(1024, 720);
-            this.Name = "MainForm";
-            this.Text = "GTA5 Modding Utils GUI";
-            this.grpFeatures.ResumeLayout(false);
-            this.grpFeatures.PerformLayout();
-            this.grpAdvanced.ResumeLayout(false);
-            this.grpAdvanced.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudNumClusters)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudReducerResolution)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1024, 720);
+            Controls.Add(txtLog);
+            Controls.Add(btnCancel);
+            Controls.Add(btnRun);
+            Controls.Add(grpLodMultipliers);
+            Controls.Add(grpAdvanced);
+            Controls.Add(grpFeatures);
+            Controls.Add(txtPrefix);
+            Controls.Add(chkUseOriginalNames);
+            Controls.Add(lblPrefix);
+            Controls.Add(btnBrowseOutputDir);
+            Controls.Add(btnOpenOutputDir);
+            Controls.Add(txtOutputDir);
+            Controls.Add(lblOutputDir);
+            Controls.Add(btnBrowseInputDir);
+            Controls.Add(txtInputDir);
+            Controls.Add(lblInputDir);
+            Controls.Add(btnBrowsePython);
+            Controls.Add(txtPythonPath);
+            Controls.Add(lblPythonPath);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
+            MinimumSize = new Size(1024, 720);
+            Name = "MainForm";
+            Text = "GTA5 Modding Utils GUI";
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
+            grpFeatures.ResumeLayout(false);
+            grpFeatures.PerformLayout();
+            grpAdvanced.ResumeLayout(false);
+            grpAdvanced.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudNumClusters).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudReducerResolution).EndInit();
+            grpLodMultipliers.ResumeLayout(false);
+            grpLodMultipliers.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierPalms).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierBushes).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierTrees).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudLodMultiplierCacti).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -625,10 +761,9 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.CheckBox chkReducer;
         private System.Windows.Forms.CheckBox chkEntropy;
         private System.Windows.Forms.CheckBox chkVegetation;
+        private System.Windows.Forms.CheckBox chkCustomMeshes;
         private System.Windows.Forms.GroupBox grpAdvanced;
-        private System.Windows.Forms.TextBox txtPolygon;
-        private System.Windows.Forms.Button btnLodAtlasHelper;
-        private System.Windows.Forms.Label lblPolygon;
+        private System.Windows.Forms.TextBox txtPolygon;        private System.Windows.Forms.Label lblPolygon;
         private System.Windows.Forms.TextBox txtClusteringExcluded;
         private System.Windows.Forms.Label lblClusteringExcluded;
         private System.Windows.Forms.TextBox txtClusteringPrefix;
@@ -641,12 +776,29 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox txtLog;
+        /// <summary>
+        /// Checkbox for toggling use of original map names.
+        /// </summary>
+        private System.Windows.Forms.CheckBox chkUseOriginalNames;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem customAssetsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem lodAtlasHelperToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem preview3DToolStripMenuItem;        private System.Windows.Forms.ToolStripMenuItem customMeshesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem textureCreationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tutorialsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator helpToolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem viewReadmeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.GroupBox grpLodMultipliers;
+        private System.Windows.Forms.CheckBox chkEnableLodMultipliers;
+        private System.Windows.Forms.Label lblLodCacti;
+        private System.Windows.Forms.Label lblLodTrees;
+        private System.Windows.Forms.Label lblLodBushes;
+        private System.Windows.Forms.Label lblLodPalms;
+        private System.Windows.Forms.NumericUpDown nudLodMultiplierCacti;
+        private System.Windows.Forms.NumericUpDown nudLodMultiplierTrees;
+        private System.Windows.Forms.NumericUpDown nudLodMultiplierBushes;
+        private System.Windows.Forms.NumericUpDown nudLodMultiplierPalms;
     }
 }

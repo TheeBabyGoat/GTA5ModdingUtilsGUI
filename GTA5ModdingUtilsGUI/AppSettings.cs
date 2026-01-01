@@ -12,7 +12,16 @@ namespace GTA5ModdingUtilsGUI
     {
         DarkTeal,
         Light,
-        DarkGray
+        DarkGray,
+
+        // New themes (append-only to preserve existing numeric values in persisted settings).
+        Maroon,
+        MidnightPurple,
+        TurquoiseBlue,
+        WoodGrain,
+        SkyClouds,
+        Volcanic,
+        Ashes
     }
 
     /// <summary>

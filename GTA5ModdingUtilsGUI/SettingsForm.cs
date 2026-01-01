@@ -78,13 +78,30 @@ namespace GTA5ModdingUtilsGUI
                 Left = 12,
                 Top = lblTheme.Bottom + 4,
                 Width = 200,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FormattingEnabled = true
             };
 
             // Populate with available themes.
             _cmbTheme.Items.Add(AppTheme.DarkTeal);
             _cmbTheme.Items.Add(AppTheme.Light);
             _cmbTheme.Items.Add(AppTheme.DarkGray);
+            _cmbTheme.Items.Add(AppTheme.Maroon);
+            _cmbTheme.Items.Add(AppTheme.MidnightPurple);
+            _cmbTheme.Items.Add(AppTheme.TurquoiseBlue);
+            _cmbTheme.Items.Add(AppTheme.WoodGrain);
+            _cmbTheme.Items.Add(AppTheme.SkyClouds);
+            _cmbTheme.Items.Add(AppTheme.Volcanic);
+            _cmbTheme.Items.Add(AppTheme.Ashes);
+
+            // Render enums with user-friendly names while still storing AppTheme values.
+            _cmbTheme.Format += (s, e) =>
+            {
+                if (e.ListItem is AppTheme t)
+                {
+                    e.Value = ThemeHelper.GetDisplayName(t);
+                }
+            };
 
             // When the selection changes, update the dialog's theme immediately
             // so the user can preview it without closing the window.

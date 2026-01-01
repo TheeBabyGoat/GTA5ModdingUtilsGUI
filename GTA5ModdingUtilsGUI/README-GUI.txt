@@ -2,7 +2,7 @@ GTA5 Modding Utils GUI
 ======================
 
 Graphical front‑end for the `gta5-modding-utils` Python tools, plus helpers
-for custom vegetation LOD / SLOD atlases and live UV editing.
+for custom meshes and live UV editing.
 
 First‑time setup
 ----------------
@@ -19,11 +19,7 @@ First‑time setup
    - Also install and additional package `glob2` by running:
      ```
      python -m pip install glob2 
-     ```
-   - • REPLACE LodMapCreator.py with the provided edited copy gta5-modding-utils-main\\worker\\lod_map_creator\n" +
-        • This is needed to allow the JSON file to communicate with the script.
-
-2. In the GUI:
+     ```2. In the GUI:
    - Set gta5-modding-utils to the path of your folder containing the enviorment. For example,
      `C:\Users\You\gta5-mod-utils\`).
    - Pick your **Input** and **Output** folders.
@@ -51,25 +47,52 @@ Typical workflow:
    from `main.py`. Any matplotlib windows created by the Python scripts
    will still pop up as usual.
 
-Custom assets – LOD / SLOD Atlas Helper
----------------------------------------
+LOD Distance Overrides
+----------------------
 
-The **LOD / SLOD Atlas Helper** button in the *Advanced* section opens a tool
-for building JSON data that describes how your custom props use a LOD atlas
-texture (for example `vegetation_lod.ytd`).
+The **LOD Distance Overrides** panel lets you set a hard `lodDist` value for
+common vegetation buckets (Cacti, Trees, Bushes, Palms) when generating LODs.
 
-In the Atlas Helper:
+Internally, the tool still computes a base LOD distance from each HD entity’s
+bounding box, bounding sphere, and scale. If overrides are enabled and the
+value for a category is > 0, that value is used instead of the computed one:
 
-1. Choose your **atlas texture** (PNG/JPG/DDS) and the **props / YTYP XML**.
-2. Set the **Atlas grid** (rows and columns) so it matches your atlas layout.
-3. For each prop in the grid:
-   - Set the **Row** and **Column** (0‑based tile index in the atlas).
-   - Adjust **Texture origin (0–1)** and **Plane Z (0–1)** if you need
-     per‑prop tweaks.
-4. Click **3D Preview…** to open the mesh preview & UV editor and fine‑tune
-   a single mesh visually.
-5. When you are satisfied, click **Generate** to write the JSON file that you
-   can then import into your LOD texture workflow.
+    finalLodDistance = overrideValue   (when Enable is checked and overrideValue > 0)
+    finalLodDistance = baseLodDistance (otherwise)
+
+Controls
+--------
+
+- Enable
+  - Turns the override system on or off.
+  - Unchecked: all categories use the computed distances.
+  - Checked: categories with a value > 0 override the computed distance.
+
+- Cacti / Trees / Bushes / Palms
+  - Absolute LOD distance to apply for that category.
+  - Set to **0** to keep the tool’s computed default for that category.
+
+Effects in-game
+---------------
+
+- Higher values
+  - Vegetation stays visible from further away (less pop-in).
+  - May increase the number of objects rendered at distance (performance cost).
+
+- Lower values
+  - Vegetation disappears or swaps to lower-detail models closer to the camera.
+  - Can improve performance, especially in dense areas.
+
+Example
+-------
+
+To force trees to stay visible until ~200 units from the camera, enable the
+panel and set:
+
+- Trees = 200
+
+Leave other categories at 0 if you do not want to override them.
+
 
 LOD Atlas Mesh Preview & UV editor
 ----------------------------------
@@ -83,10 +106,7 @@ Key features:
   selects the corresponding UVs in the 2D editor.
 - **UV mode** dropdown: choose between **Move**, **Scale** and **Rotate** to
   decide how the current UV selection is transformed.
-- **Live Texture origin / Plane Z**:
-  - The numeric fields update the preview immediately.
-  - When you click **Save & Close**, the values are written back to the Atlas
-    Helper grid for the selected prop.
+- **Export OBJ**: writes the current UV edits to a new OBJ file.
 - **Camera controls**:
   - Left‑drag: orbit around the mesh.
   - Middle‑drag: constrained rotation / orbit for comfortable inspection.
@@ -108,7 +128,7 @@ Themes
 The GUI supports multiple color themes so it can better match your workflow:
 
 - Open **Settings → Theme** to choose a preset.
-- Most windows (main form, settings, LOD / SLOD Atlas Helper, 3D preview,
+- Most windows (main form, settings, 3D preview,
   etc.) follow the currently selected theme.
 - The actual **mesh preview** and **UV editor** drawing areas intentionally
   stay neutral (light gray / checkerboard) so textures remain easy to read

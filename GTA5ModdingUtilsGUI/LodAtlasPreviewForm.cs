@@ -42,8 +42,6 @@ namespace GTA5ModdingUtilsGUI
 
         private readonly ComboBox _cmbUvMode;
 
-        private readonly ComboBox _cmbPropTarget;
-
         private readonly Button _btnBrowseMesh;
 
         private string? _meshFolder;
@@ -54,183 +52,13 @@ namespace GTA5ModdingUtilsGUI
 
         private readonly Button _btnReload;
 
-        private readonly NumericUpDown _nudTextureOrigin;
+        private readonly Button _btnExportObj;
 
-        private readonly NumericUpDown _nudPlaneZ;
+        private string? _loadedMeshPath;
 
+        private string? _lastExportObjPath;
 
 
-        /// <summary>
-
-        /// Current texture origin in [0,1].
-
-        /// </summary>
-
-        public double TextureOrigin
-
-        {
-
-            get => (double)_nudTextureOrigin.Value;
-
-            set
-
-            {
-
-                decimal v = (decimal)Math.Max(0.0, Math.Min(1.0, value));
-
-                _nudTextureOrigin.Value = v;
-
-            }
-
-        }
-
-
-
-        /// <summary>
-
-        /// Current plane Z in [0,1].
-
-        /// </summary>
-
-        public double PlaneZ
-
-        {
-
-            get => (double)_nudPlaneZ.Value;
-
-            set
-
-            {
-
-                decimal v = (decimal)Math.Max(0.0, Math.Min(1.0, value));
-
-                _nudPlaneZ.Value = v;
-
-            }
-
-        }
-
-
-
-
-
-
-
-        /// <summary>
-
-        /// Name of the prop/mapping row that should receive the edited UV parameters
-
-        /// when the user clicks Save in this preview window. This is populated by
-
-        /// the LOD atlas helper based on the current mapping grid.
-
-        /// </summary>
-
-        public string? SelectedPropTarget
-
-        {
-
-            get
-
-            {
-
-                return _cmbPropTarget.SelectedItem as string;
-
-            }
-
-        }
-
-
-
-        /// <summary>
-
-        /// Populate the "apply edits to prop" drop-down with all prop names loaded
-
-        /// from the mapping grid. The currently selected row's prop name is used
-
-        /// as the initial selection when possible.
-
-        /// </summary>
-
-        public void SetPropTargets(IEnumerable<string> propNames, string? currentPropName)
-
-        {
-
-            if (_cmbPropTarget == null)
-
-                return;
-
-
-
-            _cmbPropTarget.BeginUpdate();
-
-            try
-
-            {
-
-                _cmbPropTarget.Items.Clear();
-
-
-
-                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-
-
-                foreach (var raw in propNames)
-
-                {
-
-                    var name = raw?.Trim();
-
-                    if (string.IsNullOrEmpty(name))
-
-                        continue;
-
-
-
-                    if (seen.Contains(name))
-
-                        continue;
-
-
-
-                    seen.Add(name);
-
-                    _cmbPropTarget.Items.Add(name);
-
-                }
-
-
-
-                if (!string.IsNullOrWhiteSpace(currentPropName))
-
-                {
-
-                    int idx = _cmbPropTarget.FindStringExact(currentPropName);
-
-                    if (idx >= 0)
-
-                        _cmbPropTarget.SelectedIndex = idx;
-
-                }
-
-
-
-                if (_cmbPropTarget.Items.Count > 0 && _cmbPropTarget.SelectedIndex < 0)
-
-                    _cmbPropTarget.SelectedIndex = 0;
-
-            }
-
-            finally
-
-            {
-
-                _cmbPropTarget.EndUpdate();
-
-            }
-
-        }
 
 
 
@@ -260,7 +88,7 @@ namespace GTA5ModdingUtilsGUI
 
                 ColumnCount = 3,
 
-                RowCount = 5,
+                RowCount = 3,
 
                 Padding = new Padding(8, 8, 8, 4)
 
@@ -275,10 +103,6 @@ namespace GTA5ModdingUtilsGUI
             headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));         // buttons
 
 
-
-            headerLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
-            headerLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             headerLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
@@ -438,155 +262,7 @@ namespace GTA5ModdingUtilsGUI
 
 
 
-            // Row 2: texture origin / plane Z controls
-
-            var lblParams = new Label
-
-            {
-
-                AutoSize = true,
-
-                Text = "LOD params:",
-
-                Margin = new Padding(0, 6, 6, 6)
-
-            };
-
-
-
-            var paramsPanel = new FlowLayoutPanel
-
-            {
-
-                Dock = DockStyle.Fill,
-
-                AutoSize = true,
-
-                AutoSizeMode = AutoSizeMode.GrowAndShrink,
-
-                FlowDirection = FlowDirection.LeftToRight,
-
-                WrapContents = false,
-
-                Margin = new Padding(0, 0, 0, 0),
-
-                Padding = new Padding(0)
-
-            };
-
-
-
-            var lblTexOrigin = new Label
-
-            {
-
-                AutoSize = true,
-
-                Text = "Texture origin:",
-
-                Margin = new Padding(0, 6, 4, 6)
-
-            };
-
-
-
-            _nudTextureOrigin = new NumericUpDown
-
-            {
-
-                Minimum = 0,
-
-                Maximum = 1,
-
-                DecimalPlaces = 3,
-
-                Increment = 0.01M,
-
-                Width = 80,
-
-                Margin = new Padding(0, 3, 12, 3)
-
-            };
-
-
-
-            var lblPlaneZ = new Label
-
-            {
-
-                AutoSize = true,
-
-                Text = "Plane Z:",
-
-                Margin = new Padding(0, 6, 4, 6)
-
-            };
-
-
-
-            _nudPlaneZ = new NumericUpDown
-
-            {
-
-                Minimum = 0,
-
-                Maximum = 1,
-
-                DecimalPlaces = 3,
-
-                Increment = 0.01M,
-
-                Width = 80,
-
-                Margin = new Padding(0, 3, 0, 3)
-
-            };
-
-
-
-            paramsPanel.Controls.Add(lblTexOrigin);
-
-            paramsPanel.Controls.Add(_nudTextureOrigin);
-
-            paramsPanel.Controls.Add(lblPlaneZ);
-
-            paramsPanel.Controls.Add(_nudPlaneZ);
-
-
-
-            // Default values
-
-            _nudTextureOrigin.Value = 0.5M;
-
-            _nudPlaneZ.Value = 0.5M;
-
-
-
-            _nudTextureOrigin.ValueChanged += (_, __) =>
-
-            {
-
-                _viewer?.Invalidate();
-
-            };
-
-            _nudPlaneZ.ValueChanged += (_, __) =>
-
-            {
-
-                _viewer?.Invalidate();
-
-            };
-
-
-
-            headerLayout.Controls.Add(lblParams, 0, 2);
-
-            headerLayout.Controls.Add(paramsPanel, 1, 2);
-
-            // leave column 2 empty for this row.
-
-            // Row 3: UV transform mode (Move / Scale / Rotate).
+            // Row 2: UV transform mode (Move / Scale / Rotate).
 
             var lblUvMode = new Label
 
@@ -638,9 +314,9 @@ namespace GTA5ModdingUtilsGUI
 
 
 
-            headerLayout.Controls.Add(lblUvMode, 0, 3);
+            headerLayout.Controls.Add(lblUvMode, 0, 2);
 
-            headerLayout.Controls.Add(_cmbUvMode, 1, 3);
+            headerLayout.Controls.Add(_cmbUvMode, 1, 2);
 
 
 
@@ -672,47 +348,7 @@ namespace GTA5ModdingUtilsGUI
 
             };
 
-            headerLayout.Controls.Add(chk3dEditMode, 2, 3);
-
-
-
-            var lblPropTarget = new Label
-
-            {
-
-                AutoSize = true,
-
-                Text = "Apply edits to prop:",
-
-                Margin = new Padding(0, 6, 6, 6)
-
-            };
-
-
-
-            _cmbPropTarget = new ComboBox
-
-            {
-
-                Dock = DockStyle.Fill,
-
-                DropDownStyle = ComboBoxStyle.DropDownList,
-
-                Margin = new Padding(0, 3, 6, 3)
-
-            };
-
-
-
-            headerLayout.Controls.Add(lblPropTarget, 0, 4);
-
-            headerLayout.Controls.Add(_cmbPropTarget, 1, 4);
-
-
-
-
-
-
+            headerLayout.Controls.Add(chk3dEditMode, 2, 2);
 
 
 
@@ -758,7 +394,7 @@ namespace GTA5ModdingUtilsGUI
 
             // When UVs change in the 2D editor, re-render the 3D preview.
 
-            _uvEditor.UvChanged += (_, __) => _viewer.Invalidate();
+            _uvEditor.UvChanged += (_, __) => _viewer.RequestRender();
 
 
 
@@ -782,9 +418,7 @@ namespace GTA5ModdingUtilsGUI
 
             Controls.Add(headerLayout);
 
-            // Bottom panel with Save / Close buttons so the caller can
-
-            // decide whether to persist edited values back into the atlas helper.
+            // Bottom panel with Close / Export buttons.
 
             var bottomPanel = new FlowLayoutPanel
 
@@ -819,26 +453,22 @@ namespace GTA5ModdingUtilsGUI
             };
 
 
-
-            var btnSave = new Button
+            bottomPanel.Controls.Add(btnClose);
+            _btnExportObj = new Button
 
             {
 
-                Text = "Save && Close",
+                Text = "Export OBJ...",
 
                 AutoSize = true,
-
-                DialogResult = DialogResult.OK,
 
                 Margin = new Padding(6, 3, 0, 3)
 
             };
 
+            _btnExportObj.Click += BtnExportObj_Click;
 
-
-            bottomPanel.Controls.Add(btnClose);
-
-            bottomPanel.Controls.Add(btnSave);
+            bottomPanel.Controls.Add(_btnExportObj);
 
 
 
@@ -846,7 +476,7 @@ namespace GTA5ModdingUtilsGUI
 
 
 
-            AcceptButton = btnSave;
+            AcceptButton = btnClose;
 
             CancelButton = btnClose;
 
@@ -1044,6 +674,69 @@ namespace GTA5ModdingUtilsGUI
 
             }
 
+        }
+
+
+        /// <summary>
+        /// Convenience API for other windows (e.g. Custom Meshes) to open a specific
+        /// OBJ file directly in this preview window.
+        /// </summary>
+        public void TryOpenMeshFromPath(string? meshPath)
+        {
+            if (string.IsNullOrWhiteSpace(meshPath))
+                return;
+
+            string fullPath;
+            try
+            {
+                fullPath = Path.GetFullPath(meshPath);
+            }
+            catch
+            {
+                fullPath = meshPath;
+            }
+
+            if (!File.Exists(fullPath))
+                return;
+
+            // Ensure the mesh is present in the drop-down so the user can easily swap.
+            MeshListItem? found = null;
+            foreach (var item in _cmbMeshPath.Items)
+            {
+                if (item is MeshListItem mi)
+                {
+                    try
+                    {
+                        if (string.Equals(Path.GetFullPath(mi.Path), fullPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            found = mi;
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        if (string.Equals(mi.Path, fullPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            found = mi;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (found == null)
+            {
+                string name = Path.GetFileNameWithoutExtension(fullPath);
+                found = new MeshListItem(name, fullPath);
+                _cmbMeshPath.Items.Insert(0, found);
+            }
+
+            // Selecting the item triggers LoadMesh via SelectedIndexChanged.
+            _cmbMeshPath.SelectedItem = found;
+            _cmbMeshPath.Text = fullPath;
+
+            // Also load explicitly so it works even if the SelectedIndex doesn't change.
+            LoadMesh(fullPath);
         }
 
 
@@ -1752,6 +1445,276 @@ namespace GTA5ModdingUtilsGUI
 
 
 
+        private void BtnExportObj_Click(object? sender, EventArgs e)
+
+        {
+
+            var mesh = _viewer.Mesh;
+
+            if (mesh == null || mesh.Vertices == null || mesh.Vertices.Length == 0)
+
+            {
+
+                MessageBox.Show(this,
+
+                    "No mesh is currently loaded.",
+
+                    Text,
+
+                    MessageBoxButtons.OK,
+
+                    MessageBoxIcon.Information);
+
+                return;
+
+            }
+
+
+
+            string suggestedPath = GetSuggestedExportObjPath();
+
+
+
+            using var sfd = new SaveFileDialog
+
+            {
+
+                Filter = "Wavefront OBJ (*.obj)|*.obj|All files (*.*)|*.*",
+
+                Title = "Export edited mesh as OBJ",
+
+                OverwritePrompt = true,
+
+                FileName = Path.GetFileName(suggestedPath)
+
+            };
+
+
+
+            try
+
+            {
+
+                var dir = Path.GetDirectoryName(suggestedPath);
+
+                if (!string.IsNullOrWhiteSpace(dir) && Directory.Exists(dir))
+
+                    sfd.InitialDirectory = dir;
+
+            }
+
+            catch
+
+            {
+
+                // Ignore invalid initial directory.
+
+            }
+
+
+
+            if (sfd.ShowDialog(this) != DialogResult.OK)
+
+                return;
+
+
+
+            try
+
+            {
+
+                string outPath = sfd.FileName;
+
+                string objName = Path.GetFileNameWithoutExtension(outPath);
+
+                mesh.SaveToObj(outPath, objName);
+
+                _lastExportObjPath = outPath;
+
+
+
+                MessageBox.Show(this,
+
+                    "Exported OBJ:\n" + outPath,
+
+                    Text,
+
+                    MessageBoxButtons.OK,
+
+                    MessageBoxIcon.Information);
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                MessageBox.Show(this,
+
+                    "Failed to export OBJ:\n" + ex.Message,
+
+                    Text,
+
+                    MessageBoxButtons.OK,
+
+                    MessageBoxIcon.Error);
+
+            }
+
+        }
+
+
+
+        private string GetSuggestedExportObjPath()
+
+        {
+
+            // If the user exported once already in this session, use that directory and a unique name.
+
+            if (!string.IsNullOrWhiteSpace(_lastExportObjPath))
+
+            {
+
+                try
+
+                {
+
+                    var dir = Path.GetDirectoryName(_lastExportObjPath!);
+
+                    var baseName = Path.GetFileNameWithoutExtension(_lastExportObjPath!);
+
+                    if (!string.IsNullOrWhiteSpace(dir))
+
+                        return MakeUniquePath(Path.Combine(dir, baseName + ".obj"));
+
+                }
+
+                catch
+
+                {
+
+                    // Fall through.
+
+                }
+
+            }
+
+
+
+            // Prefer the source mesh path if available.
+
+            string? sourcePath = _loadedMeshPath;
+
+            if (string.IsNullOrWhiteSpace(sourcePath))
+
+                sourcePath = _cmbMeshPath.Text;
+
+
+
+            string dirPath;
+
+            string fileStem;
+
+            try
+
+            {
+
+                dirPath = (!string.IsNullOrWhiteSpace(sourcePath) && File.Exists(sourcePath))
+
+                    ? Path.GetDirectoryName(sourcePath) ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+
+                    : Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+
+
+                fileStem = (!string.IsNullOrWhiteSpace(sourcePath) && File.Exists(sourcePath))
+
+                    ? Path.GetFileNameWithoutExtension(sourcePath)
+
+                    : "export";
+
+            }
+
+            catch
+
+            {
+
+                dirPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+                fileStem = "export";
+
+            }
+
+
+
+            // Default naming: <mesh>_uv.obj
+
+            string suggested = Path.Combine(dirPath, fileStem + "_uv.obj");
+
+            return MakeUniquePath(suggested);
+
+        }
+
+
+
+        private static string MakeUniquePath(string path)
+
+        {
+
+            if (string.IsNullOrWhiteSpace(path))
+
+                return path;
+
+
+
+            try
+
+            {
+
+                if (!File.Exists(path))
+
+                    return path;
+
+
+
+                string dir = Path.GetDirectoryName(path) ?? string.Empty;
+
+                string stem = Path.GetFileNameWithoutExtension(path);
+
+                string ext = Path.GetExtension(path);
+
+
+
+                for (int i = 1; i < 1000; i++)
+
+                {
+
+                    string candidate = Path.Combine(dir, $"{stem}_{i}{ext}");
+
+                    if (!File.Exists(candidate))
+
+                        return candidate;
+
+                }
+
+            }
+
+            catch
+
+            {
+
+                // If anything goes wrong, just return the original path.
+
+            }
+
+
+
+            return path;
+
+        }
+
+
+
         private void LoadMesh(string path)
 
         {
@@ -1765,6 +1728,8 @@ namespace GTA5ModdingUtilsGUI
                 _viewer.Mesh = mesh;
 
                 _uvEditor.Mesh = mesh;
+
+                _loadedMeshPath = path;
 
             }
 

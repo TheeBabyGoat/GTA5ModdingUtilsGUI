@@ -91,8 +91,9 @@ namespace GTA5ModdingUtilsGUI
 
             if (lblSubtitle != null)
             {
-                // Slightly dimmer text for subtitle in dark themes.
-                lblSubtitle.ForeColor = (theme == AppTheme.Light)
+                // Slightly dimmer text for subtitle.
+                // Use a light/dark heuristic so new themes behave sensibly.
+                lblSubtitle.ForeColor = ThemeHelper.IsLightTheme(theme)
                     ? Color.DimGray
                     : Color.FromArgb(190, 210, 220);
             }

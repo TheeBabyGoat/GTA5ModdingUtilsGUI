@@ -34,11 +34,17 @@ namespace GTA5ModdingUtilsGUI
         private const int HTCLIENT = 1;
         private const int HTBOTTOMRIGHT = 17;
 
-
+        // Added fields for custom LOD distance overrides per vegetation category.
+        // These controls will be created in the constructor and allow the user
+        // to specify scaling factors for cacti, trees, bushes and palms. When the
+        // Python script is invoked these values are passed as command line arguments.
         public MainForm()
         {
             InitializeComponent();
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
+            InitializeLodMultiplierControls();
+
 
             // Shift all controls down by the menu strip height so nothing overlaps.
             if (menuStrip1 != null)
@@ -55,7 +61,58 @@ namespace GTA5ModdingUtilsGUI
             ApplyTheme(SettingsManager.Current.Theme);
             ApplySavedToolRoot();
             AddLogoToUi();
+
+            // When the "Use original map names" checkbox is toggled, update the
+            // prefix textbox enabled state accordingly.  If no prefix is
+            // required, disable the prefix textbox so the user knows it is
+            // ignored.  Otherwise, re-enable it.
+            // Initialize the enabled state of the prefix textbox based on
+            // whether the "Use original map names" option is checked. The
+            // designer already wires up the CheckedChanged event so we
+            // simply invoke the handler once here to set the initial state.
+            if (chkUseOriginalNames != null)
+            {
+                chkUseOriginalNames_CheckedChanged(chkUseOriginalNames, EventArgs.Empty);
+            }
         }
+
+        /// <summary>
+        /// Create and add controls that allow the user to specify custom LOD distance
+        /// override distances for different vegetation categories. These controls are grouped
+        /// together in a dedicated group box. Default values are 0 (no override).
+        /// </summary>
+
+
+        private void InitializeLodMultiplierControls()
+        {
+            // Wire up the enable checkbox to toggle the numeric controls.
+            if (chkEnableLodMultipliers != null)
+            {
+                chkEnableLodMultipliers.CheckedChanged += (s, e) => UpdateLodMultiplierControlState();
+            }
+
+            // Apply the initial enabled/disabled state.
+            UpdateLodMultiplierControlState();
+        }
+
+        private void UpdateLodMultiplierControlState()
+        {
+            bool enabled = chkEnableLodMultipliers != null && chkEnableLodMultipliers.Checked;
+
+            if (nudLodMultiplierCacti != null)
+                nudLodMultiplierCacti.Enabled = enabled;
+
+            if (nudLodMultiplierTrees != null)
+                nudLodMultiplierTrees.Enabled = enabled;
+
+            if (nudLodMultiplierBushes != null)
+                nudLodMultiplierBushes.Enabled = enabled;
+
+            if (nudLodMultiplierPalms != null)
+                nudLodMultiplierPalms.Enabled = enabled;
+        }
+
+
 
 
         private void BuildCustomTitleBar()
@@ -108,8 +165,13 @@ namespace GTA5ModdingUtilsGUI
             settingsItem.Click += settingsToolStripMenuItem_Click;
 
             var helpItem = new ToolStripMenuItem("Help");
+            var tutorialsItem = new ToolStripMenuItem("Tutorials...");
+            tutorialsItem.Click += tutorialsToolStripMenuItem_Click;
+            var sep = new ToolStripSeparator();
             var readmeItem = new ToolStripMenuItem("View Readme");
             readmeItem.Click += viewReadmeToolStripMenuItem_Click;
+            helpItem.DropDownItems.Add(tutorialsItem);
+            helpItem.DropDownItems.Add(sep);
             helpItem.DropDownItems.Add(readmeItem);
 
             var creditsItem = new ToolStripMenuItem("Credits");
@@ -238,6 +300,7 @@ namespace GTA5ModdingUtilsGUI
             string inputDir = txtInputDir.Text.Trim();
             string outputDir = txtOutputDir.Text.Trim();
             string prefix = txtPrefix.Text.Trim();
+            bool useOriginalNames = chkUseOriginalNames != null && chkUseOriginalNames.Checked;
 
             if (string.IsNullOrEmpty(inputDir) || !Directory.Exists(inputDir))
             {
@@ -246,7 +309,11 @@ namespace GTA5ModdingUtilsGUI
                 return;
             }
 
-            if (string.IsNullOrEmpty(prefix))
+            // Require a project prefix only when not using original names. If the
+            // user opts to preserve existing ymap names, an empty prefix is
+            // acceptable and will be ignored by the underlying script. Otherwise
+            // enforce a non‑empty prefix.
+            if (!useOriginalNames && string.IsNullOrEmpty(prefix))
             {
                 MessageBox.Show("Please provide a prefix for this project.", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -364,6 +431,8 @@ namespace GTA5ModdingUtilsGUI
             psi.ArgumentList.Add(inputDir);
             psi.ArgumentList.Add("--outputDir");
             psi.ArgumentList.Add(outputDir);
+            // Always supply the prefix argument, even if empty. The script
+            // determines whether to use it based on the useOriginalNames flag.
             psi.ArgumentList.Add("--prefix");
             psi.ArgumentList.Add(prefix);
 
@@ -443,6 +512,12 @@ namespace GTA5ModdingUtilsGUI
                 psi.ArgumentList.Add("on");
             }
 
+            if (chkCustomMeshes.Checked)
+            {
+                psi.ArgumentList.Add("--customMeshesOnly");
+                psi.ArgumentList.Add("on");
+            }
+
             if (chkClearLod.Checked)
             {
                 psi.ArgumentList.Add("--clearLod");
@@ -465,6 +540,43 @@ namespace GTA5ModdingUtilsGUI
             {
                 psi.ArgumentList.Add("--statistics");
                 psi.ArgumentList.Add("on");
+            }
+
+            // Indicate whether the tool should operate directly on existing map names.
+            // Pass "on" when the checkbox is checked and "off" otherwise. The
+            // underlying Python script defaults to false when the option is omitted,
+            // but explicitly setting it clarifies intent and makes behaviour
+            // deterministic.
+            psi.ArgumentList.Add("--useOriginalNames");
+            psi.ArgumentList.Add(useOriginalNames ? "on" : "off");
+
+            // Pass the custom LOD distance overrides to the Python script only when the
+            // feature is enabled in the UI.
+            if (chkEnableLodMultipliers != null && chkEnableLodMultipliers.Checked)
+            {
+                // Always pass the custom LOD distance overrides to the Python script. The values
+                // are taken from the numeric controls in the LOD Distance Overrides group.
+                if (nudLodMultiplierCacti != null)
+                {
+                    psi.ArgumentList.Add("--lodDistanceCacti");
+                    psi.ArgumentList.Add(nudLodMultiplierCacti.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                }
+                if (nudLodMultiplierTrees != null)
+                {
+                    psi.ArgumentList.Add("--lodDistanceTrees");
+                    psi.ArgumentList.Add(nudLodMultiplierTrees.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                }
+                if (nudLodMultiplierBushes != null)
+                {
+                    psi.ArgumentList.Add("--lodDistanceBushes");
+                    psi.ArgumentList.Add(nudLodMultiplierBushes.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                }
+                if (nudLodMultiplierPalms != null)
+                {
+                    psi.ArgumentList.Add("--lodDistancePalms");
+                    psi.ArgumentList.Add(nudLodMultiplierPalms.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                }
+
             }
 
             try
@@ -581,6 +693,31 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
+        /// <summary>
+        /// Event handler for toggling the "Use original map names" option.
+        /// When enabled, the prefix text box is disabled and cleared so that
+        /// the tool operates directly on existing map names without a project
+        /// prefix. When disabled, the prefix text box is re‑enabled to
+        /// accept a new project prefix.
+        /// </summary>
+        private void chkUseOriginalNames_CheckedChanged(object? sender, EventArgs e)
+        {
+            // Guard against null references since the designer can reinstantiate
+            // controls before this handler is attached.
+            if (this.chkUseOriginalNames == null || this.txtPrefix == null)
+            {
+                return;
+            }
+            bool useOriginal = this.chkUseOriginalNames.Checked;
+            // Disable or enable the prefix textbox based on the toggle.
+            this.txtPrefix.Enabled = !useOriginal;
+            if (useOriginal)
+            {
+                // Clear any existing prefix to avoid accidental reuse.
+                this.txtPrefix.Text = string.Empty;
+            }
+        }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             if (_currentProcess != null && !_currentProcess.HasExited)
@@ -595,6 +732,24 @@ namespace GTA5ModdingUtilsGUI
                     MessageBox.Show("Failed to cancel process: " + ex.Message, "Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+
+
+        private void tutorialsToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            try
+            {
+                using (var frm = new TutorialsForm())
+                {
+                    frm.StartPosition = FormStartPosition.CenterParent;
+                    frm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open tutorials: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -627,7 +782,6 @@ namespace GTA5ModdingUtilsGUI
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private void settingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
@@ -770,7 +924,8 @@ namespace GTA5ModdingUtilsGUI
             GroupBox[] groups =
             {
                 grpFeatures,
-                grpAdvanced
+                grpAdvanced,
+                grpLodMultipliers
             };
 
             foreach (var g in groups)
@@ -799,7 +954,7 @@ namespace GTA5ModdingUtilsGUI
                 tb.BorderStyle = BorderStyle.FixedSingle;
             }
 
-            NumericUpDown[] numerics = { nudReducerResolution, nudNumClusters };
+            NumericUpDown[] numerics = { nudReducerResolution, nudNumClusters, nudLodMultiplierCacti, nudLodMultiplierTrees, nudLodMultiplierBushes, nudLodMultiplierPalms };
             foreach (var nud in numerics)
             {
                 if (nud == null) continue;
@@ -818,7 +973,8 @@ namespace GTA5ModdingUtilsGUI
                 chkClearLod,
                 chkReflection,
                 chkSanitizer,
-                chkStatistics
+                chkStatistics,
+                chkEnableLodMultipliers
             };
 
             foreach (var chk in steps)
@@ -844,7 +1000,6 @@ namespace GTA5ModdingUtilsGUI
                 btnBrowseInputDir,
                 btnBrowseOutputDir,
                 btnOpenOutputDir,
-                btnLodAtlasHelper
             };
 
             foreach (var btn in secondaryButtons)
@@ -940,31 +1095,210 @@ namespace GTA5ModdingUtilsGUI
             }
         }
 
-private void btnLodAtlasHelper_Click(object sender, EventArgs e)
-{
-    try
-    {
-        string toolRoot = txtPythonPath.Text.Trim();
-        if (string.IsNullOrEmpty(toolRoot))
+
+        private void preview3DToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string appDir = AppDomain.CurrentDomain.BaseDirectory;
-            string candidate = Path.Combine(appDir, "gta5-modding-utils-main");
-            toolRoot = candidate;
+            try
+            {
+                // Open the preview as a standalone window.
+                string toolRoot = txtPythonPath.Text.Trim();
+                if (string.IsNullOrEmpty(toolRoot))
+                {
+                    string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                    string candidate = Path.Combine(appDir, "gta5-modding-utils-main");
+                    toolRoot = candidate;
+                }
+
+                using var preview = new LodAtlasPreviewForm();
+
+                // Best-effort: populate the mesh dropdown from the tool root folder.
+                // Users can still browse manually if their meshes live elsewhere.
+                if (!string.IsNullOrWhiteSpace(toolRoot) && Directory.Exists(toolRoot))
+                {
+                    preview.TryPopulateMeshListFromFolder(toolRoot);
+                }
+
+                preview.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open 3D preview: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        string defaultJsonPath = Path.Combine(toolRoot, "lod_custom_candidates.json");
 
-        using (var frm = new LodAtlasHelperForm(toolRoot, defaultJsonPath))
+        private void convertOdrToObjToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frm.ShowDialog(this);
-        }
-    }
-    catch (Exception ex)
-    {
-        MessageBox.Show("Failed to open LOD atlas helper: " + ex.Message, "Error",
-            MessageBoxButtons.OK, MessageBoxIcon.Error);
-    }
-}
+            try
+            {
+                string toolRoot = txtPythonPath.Text.Trim();
+                if (string.IsNullOrWhiteSpace(toolRoot))
+                {
+                    string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                    toolRoot = Path.Combine(appDir, "gta5-modding-utils-main");
+                }
 
+                if (!Directory.Exists(toolRoot))
+                {
+                    MessageBox.Show(this,
+                        "Could not locate the gta5-modding-utils-main folder.\n\nPlease set it in the main window first.",
+                        "Convert ODR -> OBJ",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                string scriptPath = Path.Combine(toolRoot, "odr_to_obj.py");
+                if (!File.Exists(scriptPath))
+                {
+                    MessageBox.Show(this,
+                        "Could not find odr_to_obj.py in the gta5-modding-utils-main folder.\n\nExpected:\n" + scriptPath,
+                        "Convert ODR -> OBJ",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using var ofd = new OpenFileDialog
+                {
+                    Title = "Select OpenFormats Drawable (.odr)",
+                    Filter = "OpenFormats Drawable (*.odr)|*.odr|All Files (*.*)|*.*",
+                    InitialDirectory = toolRoot
+                };
+
+                if (ofd.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                string odrPath = ofd.FileName;
+                string defaultObj = Path.Combine(Path.GetDirectoryName(odrPath) ?? toolRoot,
+                    Path.GetFileNameWithoutExtension(odrPath) + ".obj");
+
+                using var sfd = new SaveFileDialog
+                {
+                    Title = "Save OBJ As",
+                    Filter = "Wavefront OBJ (*.obj)|*.obj|All Files (*.*)|*.*",
+                    FileName = Path.GetFileName(defaultObj),
+                    InitialDirectory = Path.GetDirectoryName(defaultObj) ?? toolRoot
+                };
+
+                if (sfd.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                string outObj = sfd.FileName;
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "python",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    WorkingDirectory = toolRoot
+                };
+
+                psi.ArgumentList.Add(scriptPath);
+                psi.ArgumentList.Add("--odr");
+                psi.ArgumentList.Add(odrPath);
+                psi.ArgumentList.Add("--outObj");
+                psi.ArgumentList.Add(outObj);
+
+                using var proc = Process.Start(psi);
+                if (proc == null)
+                    throw new Exception("Failed to start python process.");
+
+                string stdout = proc.StandardOutput.ReadToEnd();
+                string stderr = proc.StandardError.ReadToEnd();
+                proc.WaitForExit();
+
+                if (proc.ExitCode != 0)
+                {
+                    MessageBox.Show(this,
+                        "ODR -> OBJ conversion failed:\n\n" + stderr,
+                        "Convert ODR -> OBJ",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                MessageBox.Show(this,
+                    "Exported OBJ:\n\n" + outObj,
+                    "Convert ODR -> OBJ",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this,
+                    "Failed to convert ODR to OBJ: " + ex.Message,
+                    "Convert ODR -> OBJ",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+
+
+        private void btnCustomMeshes_Click(object? sender, EventArgs e)
+        {
+            try
+            {
+                string toolRoot = txtPythonPath.Text.Trim();
+                if (string.IsNullOrEmpty(toolRoot))
+                {
+                    string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                    string candidate = Path.Combine(appDir, "gta5-modding-utils-main");
+                    toolRoot = candidate;
+                }
+
+                string defaultJsonPath = Path.Combine(toolRoot, "custom_meshes.json");
+
+                using (var frm = new CustomMeshesForm(toolRoot, defaultJsonPath))
+                {
+                    frm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open custom meshes helper: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        void textureCreationToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            try
+            {
+                string toolRoot = txtPythonPath.Text.Trim();
+                if (string.IsNullOrEmpty(toolRoot))
+                {
+                    string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                    string candidate = Path.Combine(appDir, "gta5-modding-utils-main");
+                    toolRoot = candidate;
+                }
+
+                using (var frm = new TextureCreationForm(toolRoot))
+                {
+                    frm.StartPosition = FormStartPosition.CenterParent;
+                    frm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open texture creation helper: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void chkSanitizer_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkCustomMeshes_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

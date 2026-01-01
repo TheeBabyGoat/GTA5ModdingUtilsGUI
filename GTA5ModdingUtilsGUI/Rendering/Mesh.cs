@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Numerics;
+using System.Text;
 
 namespace GTA5ModdingUtilsGUI.Rendering
 {
@@ -22,6 +23,15 @@ namespace GTA5ModdingUtilsGUI.Rendering
         public int[] Indices { get; private set; } = Array.Empty<int>();
         public Vector3 Center { get; private set; }
         public float BoundingRadius { get; private set; }
+
+        /// <summary>
+        /// Recomputes <see cref="Center"/> and <see cref="BoundingRadius"/> from the current vertex positions.
+        /// This is useful after interactive edits.
+        /// </summary>
+        public void RecalculateBoundsPublic()
+        {
+            RecalculateBounds();
+        }
 
         public static Mesh LoadFromObj(string path)
         {
@@ -129,6 +139,68 @@ namespace GTA5ModdingUtilsGUI.Rendering
             };
             mesh.RecalculateBounds();
             return mesh;
+        }
+
+        /// <summary>
+        /// Saves this mesh to a Wavefront OBJ file, writing the current in-memory
+        /// UVs (<c>vt</c>) and positions (<c>v</c>). Faces are emitted using the
+        /// mesh's current index buffer as triangles.
+        /// </summary>
+        /// <remarks>
+        /// This exporter is intentionally simple (no normals/materials/groups) and
+        /// is only used for the GUI preview / UV editor.
+        /// </remarks>
+        public void SaveToObj(string path, string? objectName = null)
+        {
+            if (path is null) throw new ArgumentNullException(nameof(path));
+
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
+
+            var culture = CultureInfo.InvariantCulture;
+
+            using var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read);
+            using var writer = new StreamWriter(fs, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+
+            writer.WriteLine("# Exported by GTA5ModdingUtilsGUI LOD Atlas Mesh Preview");
+            if (!string.IsNullOrWhiteSpace(objectName))
+            {
+                writer.WriteLine($"o {SanitizeObjName(objectName!)}");
+            }
+
+            // Positions
+            for (int i = 0; i < Vertices.Length; i++)
+            {
+                var p = Vertices[i].Position;
+                writer.WriteLine(string.Format(culture, "v {0} {1} {2}", p.X, p.Y, p.Z));
+            }
+
+            // UVs
+            for (int i = 0; i < Vertices.Length; i++)
+            {
+                var uv = Vertices[i].TexCoord;
+                writer.WriteLine(string.Format(culture, "vt {0} {1}", uv.X, uv.Y));
+            }
+
+            // Faces: OBJ is 1-based. We bind v/vt by using the same index for both.
+            for (int i = 0; i + 2 < Indices.Length; i += 3)
+            {
+                int a = Indices[i] + 1;
+                int b = Indices[i + 1] + 1;
+                int c = Indices[i + 2] + 1;
+                writer.WriteLine($"f {a}/{a} {b}/{b} {c}/{c}");
+            }
+        }
+
+        private static string SanitizeObjName(string name)
+        {
+            // OBJ names are whitespace-separated; replace whitespace with underscores.
+            var chars = name.Trim().ToCharArray();
+            for (int i = 0; i < chars.Length; i++)
+            {
+                if (char.IsWhiteSpace(chars[i]))
+                    chars[i] = '_';
+            }
+            return new string(chars);
         }
 
         private void RecalculateBounds()

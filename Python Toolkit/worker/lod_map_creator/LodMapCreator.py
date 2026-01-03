@@ -343,6 +343,7 @@ class LodMapCreator:
         # Built-in candidate caches (populated during prepareLodCandidates/prepareSlodCandidates)
         self._builtinLodKeysLower = set()
         self._builtinSlodKeysLower = set()
+        self.customSlods = self._load_custom_slods()
 
     def _load_custom_slod_candidates(self) -> dict[str, UVMap]:
         """Load optional additional SLOD candidates from slod_custom_candidates.json.
@@ -416,7 +417,7 @@ class LodMapCreator:
         except Exception as e:
             print(f"warning: failed to load slod_custom_candidates.json: {e}")
             return {}
-
+    
     def _merge_custom_slod_candidates_into(self, slodCandidates: dict[str, UVMap]) -> None:
         """Merge user-defined and auto-generated SLOD candidates into slodCandidates.
 
@@ -492,7 +493,30 @@ class LodMapCreator:
             return set()
 
 
+    def _load_custom_slods(self) -> set[str]:
+        """Load custom slod archetype names from custom_slods.json."""
+        try:
+            root_dir = self._resolve_tool_root()
+            json_path = os.path.join(root_dir, "custom_slods.json")
+            if not os.path.exists(json_path):
+                return set()
 
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            if isinstance(data, list):
+                result = set()
+                for item in data:
+                    if isinstance(item, str):
+                        name = item.strip()
+                        if name:
+                            result.add(name.lower())
+                print(f"loaded {len(result)} custom slod name(s) from {os.path.basename(json_path)}")
+                return result
+            return set()
+        except Exception as e:
+            print(f"warning: failed to load custom_slods.json: {e}")
+            return set()
 
     def _resolve_tool_root(self) -> str:
         # Project root (two levels up from worker/lod_map_creator)
@@ -1151,11 +1175,20 @@ class LodMapCreator:
         os.mkdir(self.getOutputDirModels(False))
         os.mkdir(self.getOutputDirMetadata(False))
         os.mkdir(self.getOutputDirCustomMeshes())
+        
+        # [ADD THIS LINE]
+        os.mkdir(self.getOutputDirCustomSlods())
+        
         if self.createReflection:
             os.mkdir(self.getOutputDirMaps(True))
             os.mkdir(self.getOutputDirMeshes(True))
             os.mkdir(self.getOutputDirModels(True))
             os.mkdir(self.getOutputDirMetadata(True))
+
+    # [ADD THIS METHOD]
+    def getOutputDirCustomSlods(self) -> str:
+        """Dedicated folder for SLOD helper meshes."""
+        return os.path.join(self.outputDir, "custom_slod_meshes")
 
     def getOutputDirMaps(self, reflection: bool) -> str:
         directory = ("refl_" if reflection else "") + "maps"
@@ -1895,32 +1928,27 @@ class LodMapCreator:
 
 
     
-    def createCustomMeshesForArchetypes(self, custom_names: set[str]) -> None:
+    def createCustomMeshesForArchetypes(self, custom_names: set[str], output_dir: str = None, sampler_prefix: str = "lod_") -> None:
         """Create simple helper meshes for each archetype listed in custom_names.
 
         For each archetype we build three simple cards derived from its AABB:
           - a front billboard (facing +Y)
           - a side billboard (facing +X)
           - a horizontal top card (facing +Z)
-
-        This gives you something closer to the regular vegetation LOD setup when
-        previewing / UV editing the custom mesh in external tools.
-        Files are written to getOutputDirCustomMeshes() as:
-            <archetype>.mesh / <archetype>.odr
         """
         if not custom_names:
             return
 
-        out_dir = self.getOutputDirCustomMeshes()
-        os.makedirs(out_dir, exist_ok=True)
+        # [MODIFIED LOGIC START]
+        if output_dir is None:
+            output_dir = self.getOutputDirCustomMeshes()
+        
+        os.makedirs(output_dir, exist_ok=True)
+        # [MODIFIED LOGIC END]
 
         # Build lookup maps for case-insensitive matching against ytyp items
         ytyp_key_by_lower = {k.lower(): k for k in self.ytypItems.keys()}
 
-        # Precompute sets of archetype names already handled by *BUILT-IN* LOD/SLOD
-        # candidates. We intentionally do NOT use the full candidate dicts here,
-        # because we may inject dynamic custom candidates at runtime and we still
-        # want helper meshes exported for custom assets.
         lod_keys_lower = getattr(self, "_builtinLodKeysLower", None)
         if not lod_keys_lower:
             lod_keys_lower = {k.lower() for k in getattr(self, "lodCandidates", {}).keys()}
@@ -1932,7 +1960,6 @@ class LodMapCreator:
         for name in sorted(custom_names):
             aname = name.lower().strip()
 
-            # Skip if this archetype already has a LOD/SLOD candidate
             if aname in lod_keys_lower or aname in slod_keys_lower:
                 continue
 
@@ -1950,12 +1977,10 @@ class LodMapCreator:
             centerY = minY + sizes[1] * 0.5
             centerZ = minZ + sizes[2] * 0.5
 
-            # ----- Build vertices / normals / uvs for 3 rectangles -----
             verts: list[list[float]] = []
             normals: list[list[float]] = []
             uvs: list[list[float]] = []
 
-            # Common UV layout for each card
             plane_uvs = [
                 [0.0, 1.0],
                 [1.0, 1.0],
@@ -1963,44 +1988,33 @@ class LodMapCreator:
                 [0.0, 0.0],
             ]
 
-            # 1) Front billboard (facing +Y), on plane Y = centerY
+            # 1) Front billboard
             verts.extend([
-                [minX, centerY, minZ],  # v0
-                [maxX, centerY, minZ],  # v1
-                [maxX, centerY, maxZ],  # v2
-                [minX, centerY, maxZ],  # v3
+                [minX, centerY, minZ], [maxX, centerY, minZ], [maxX, centerY, maxZ], [minX, centerY, maxZ],
             ])
             normals.extend([[0.0, 1.0, 0.0]] * 4)
             uvs.extend(plane_uvs)
 
-            # 2) Side billboard (facing +X), on plane X = centerX
+            # 2) Side billboard
             verts.extend([
-                [centerX, minY, minZ],  # v4
-                [centerX, maxY, minZ],  # v5
-                [centerX, maxY, maxZ],  # v6
-                [centerX, minY, maxZ],  # v7
+                [centerX, minY, minZ], [centerX, maxY, minZ], [centerX, maxY, maxZ], [centerX, minY, maxZ],
             ])
             normals.extend([[1.0, 0.0, 0.0]] * 4)
             uvs.extend(plane_uvs)
 
-            # 3) Horizontal top card (facing +Z), on plane Z = centerZ (mid-height)
+            # 3) Horizontal top card
             verts.extend([
-                [minX, minY, centerZ],  # v8
-                [maxX, minY, centerZ],  # v9
-                [maxX, maxY, centerZ],  # v10
-                [minX, maxY, centerZ],  # v11
+                [minX, minY, centerZ], [maxX, minY, centerZ], [maxX, maxY, centerZ], [minX, maxY, centerZ],
             ])
             normals.extend([[0.0, 0.0, 1.0]] * 4)
             uvs.extend(plane_uvs)
 
-            # Indices: 3 rectangles = 12 vertices
             indices: list[int] = []
             num_rects = len(verts) // 4
             for i in range(num_rects):
                 offset = 4 * i
                 indices.extend([offset, offset + 1, offset + 2, offset + 2, offset + 3, offset])
 
-            # Build bounding/translation just like regular LOD
             totalBoundingGeometry = BoundingGeometry()
             totalBoundingGeometry.extendByPoints(verts)
             totalBoundingSphere = totalBoundingGeometry.getSphere()
@@ -2010,10 +2024,7 @@ class LodMapCreator:
             totalBoundingBox = totalBoundingGeometry.getBox().getTranslated(translation)
             totalBoundingSphere = totalBoundingSphere.getTranslated(translation)
 
-            # Convert vertices/normals/uv to the template format with translation
             vnut_str = LodMapCreator.convertVerticesNormalsTextureUVsAsStr(verts, normals, uvs, translation)
-
-            # Build bounds and geometry chunks
             bounds = self.createAabb(totalBoundingBox)
 
             geometries = (
@@ -2036,11 +2047,12 @@ class LodMapCreator:
             mesh_filename = base + ".mesh"
             odr_filename = base + ".odr"
 
-            with open(os.path.join(out_dir, mesh_filename), "w") as fmesh:
+            with open(os.path.join(output_dir, mesh_filename), "w") as fmesh:
                 fmesh.write(contentModelMesh)
 
-            # Minimal ODR with a single shader; use a placeholder sampler so the file is valid.
-            shaders = self.contentTemplateOdrShaderTreeLod.replace("${DIFFUSE_SAMPLER}", f"lod_{aname}")
+            # [MODIFIED SHADER GENERATION]
+            # Use the passed sampler_prefix (defaults to "lod_", but can be "slod_")
+            shaders = self.contentTemplateOdrShaderTreeLod.replace("${DIFFUSE_SAMPLER}", f"{sampler_prefix}{aname}")
 
             contentModelOdr = (
                 self.contentTemplateOdr
@@ -2058,7 +2070,7 @@ class LodMapCreator:
                 .replace("${SHADERS}\n", shaders)
             )
 
-            with open(os.path.join(out_dir, odr_filename), "w") as fodr:
+            with open(os.path.join(output_dir, odr_filename), "w") as fodr:
                 fodr.write(contentModelOdr)
 
             print(f"custom mesh written: {odr_filename}")
@@ -2751,3 +2763,22 @@ class LodMapCreator:
         if self.foundSlod:
             shutil.copyfile(_pick_source(LodMapCreator.TEXTURE_DICTIONARY_SLOD),
                             os.path.join(self.getOutputDirModels(False), LodMapCreator.TEXTURE_DICTIONARY_SLOD + ".ytd"))
+
+    def runCustomSlodsOnly(self):
+        """Create helper meshes only (for Custom SLODs), without generating full LOD maps."""
+        print("running custom slod helper creator (custom slods only)...")
+
+        self.readTemplates()
+        self.createOutputDir()
+        self.readYtypItems()
+        
+        base_dir = self.getOutputDirCustomSlods()
+
+        # Generate helpers for slod1, slod2, slod3, and slod4 folders
+        for i in range(1, 5):
+            level_name = f"slod{i}"
+            output_dir = os.path.join(base_dir, level_name)
+            # We maintain "slod_" as the sampler prefix for all levels
+            self.createCustomMeshesForArchetypes(self.customSlods, output_dir, "slod_")
+
+        print("custom slod helper creator DONE")

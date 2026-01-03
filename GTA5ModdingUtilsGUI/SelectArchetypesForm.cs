@@ -31,9 +31,8 @@ namespace GTA5ModdingUtilsGUI
                 .ToList();
 
             InitializeUi();
-            ApplyTheme(SettingsManager.Current.Theme);
-            Shown += (_, __) => ApplyTheme(SettingsManager.Current.Theme);
-            ApplyFilter();
+            // Note: We do NOT call ApplyTheme here automatically anymore because 
+            // the caller (CustomSlodsForm) will call it manually with the correct palette.
         }
 
         private void InitializeUi()
@@ -234,10 +233,9 @@ namespace GTA5ModdingUtilsGUI
             _lblCount.Text = $"Visible: {visible}    Selected: {_checked.Count}    Total: {_all.Count}";
         }
 
-        private void ApplyTheme(AppTheme theme)
+        // [CHANGE] Changed from 'private void ApplyTheme(AppTheme theme)' to 'public void ApplyTheme(ThemePalette palette)'
+        public void ApplyTheme(ThemePalette palette)
         {
-            ThemePalette palette = ThemeHelper.GetPalette(theme);
-
             BackColor = palette.WindowBack;
             ForeColor = palette.TextColor;
 

@@ -28,63 +28,67 @@ namespace GTA5ModdingUtilsGUI
         /// </summary>
         private void InitializeComponent()
         {
-            lblInfo = new System.Windows.Forms.Label();
-            lblConfigPath = new System.Windows.Forms.Label();
-            txtConfigPath = new System.Windows.Forms.TextBox();
-            btnBrowseConfig = new System.Windows.Forms.Button();
-            lblMeshes = new System.Windows.Forms.Label();
-            btnClearList = new System.Windows.Forms.Button();
-            btnAddFromResources = new System.Windows.Forms.Button();
-            txtMeshes = new System.Windows.Forms.RichTextBox();
-            btnSave = new System.Windows.Forms.Button();
-            btnClose = new System.Windows.Forms.Button();
-            lblStatus = new System.Windows.Forms.Label();
-            grpObjOverride = new System.Windows.Forms.GroupBox();
-            btnConvertOdrToObj = new System.Windows.Forms.Button();
-            btnConvertObjToOdr = new System.Windows.Forms.Button();
-            btnOpenIn3DPreview = new System.Windows.Forms.Button();
-            btnOpenOverridesFolder = new System.Windows.Forms.Button();
-            btnClearObjOverride = new System.Windows.Forms.Button();
-            btnImportObjOverride = new System.Windows.Forms.Button();
-            txtOverrideObjPath = new System.Windows.Forms.TextBox();
-            lblOverrideObj = new System.Windows.Forms.Label();
-            txtSelectedArchetype = new System.Windows.Forms.TextBox();
-            lblSelectedArchetype = new System.Windows.Forms.Label();
+            lblInfo = new Label();
+            lblConfigPath = new Label();
+            txtConfigPath = new TextBox();
+            btnBrowseConfig = new Button();
+            lblMeshes = new Label();
+            btnClearList = new Button();
+            btnAddFromResources = new Button();
+            txtMeshes = new RichTextBox();
+            btnSave = new Button();
+            btnClose = new Button();
+            lblStatus = new Label();
+            grpObjOverride = new GroupBox();
+            btnBrowseSourceOdr = new Button();
+            btnConvertOdrToObj = new Button();
+            btnConvertObjToOdr = new Button();
+            btnOpenIn3DPreview = new Button();
+            btnOpenOverridesFolder = new Button();
+            btnClearObjOverride = new Button();
+            btnImportObjOverride = new Button();
+            txtOverrideObjPath = new TextBox();
+            lblOverrideObj = new Label();
+            txtSelectedArchetype = new TextBox();
+            lblSelectedArchetype = new Label();
             grpObjOverride.SuspendLayout();
             SuspendLayout();
             // 
             // lblInfo
             // 
             lblInfo.AutoSize = true;
-            lblInfo.Location = new System.Drawing.Point(12, 9);
+            lblInfo.ForeColor = Color.Gray;
+            lblInfo.Location = new Point(12, 9);
             lblInfo.Name = "lblInfo";
-            lblInfo.Size = new System.Drawing.Size(479, 30);
+            lblInfo.Size = new Size(467, 30);
             lblInfo.TabIndex = 0;
-            lblInfo.Text = "Custom SLODs are props that require specific SLOD models managed manually.\r\nThey are exported to 'custom_slods/' and use 'slod_' texture samplers.";
+            lblInfo.Text = "Define which archetypes are 'Custom SLODs'.\r\nThese are typically vegetation or props for which you want to manually manage SLODs.";
             // 
             // lblConfigPath
             // 
             lblConfigPath.AutoSize = true;
-            lblConfigPath.Location = new System.Drawing.Point(12, 52);
+            lblConfigPath.Location = new Point(12, 53);
             lblConfigPath.Name = "lblConfigPath";
-            lblConfigPath.Size = new System.Drawing.Size(104, 15);
+            lblConfigPath.Size = new Size(104, 15);
             lblConfigPath.TabIndex = 1;
             lblConfigPath.Text = "Config file (JSON):";
             // 
             // txtConfigPath
             // 
-            txtConfigPath.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            txtConfigPath.Location = new System.Drawing.Point(119, 49);
+            txtConfigPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtConfigPath.BackColor = Color.WhiteSmoke;
+            txtConfigPath.Location = new Point(122, 50);
             txtConfigPath.Name = "txtConfigPath";
-            txtConfigPath.Size = new System.Drawing.Size(412, 23);
+            txtConfigPath.ReadOnly = true;
+            txtConfigPath.Size = new Size(449, 23);
             txtConfigPath.TabIndex = 2;
             // 
             // btnBrowseConfig
             // 
-            btnBrowseConfig.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnBrowseConfig.Location = new System.Drawing.Point(537, 48);
+            btnBrowseConfig.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnBrowseConfig.Location = new Point(576, 48);
             btnBrowseConfig.Name = "btnBrowseConfig";
-            btnBrowseConfig.Size = new System.Drawing.Size(75, 23);
+            btnBrowseConfig.Size = new Size(76, 25);
             btnBrowseConfig.TabIndex = 3;
             btnBrowseConfig.Text = "Browse...";
             btnBrowseConfig.UseVisualStyleBackColor = true;
@@ -93,83 +97,85 @@ namespace GTA5ModdingUtilsGUI
             // lblMeshes
             // 
             lblMeshes.AutoSize = true;
-            lblMeshes.Location = new System.Drawing.Point(12, 86);
+            lblMeshes.Location = new Point(12, 85);
             lblMeshes.Name = "lblMeshes";
-            lblMeshes.Size = new System.Drawing.Size(250, 15);
+            lblMeshes.Size = new Size(146, 15);
             lblMeshes.TabIndex = 4;
-            lblMeshes.Text = "Custom SLOD archetype names (one per line):";
+            lblMeshes.Text = "Custom SLOD Archetypes:";
             // 
             // btnClearList
             // 
-            btnClearList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnClearList.Location = new System.Drawing.Point(268, 78);
+            btnClearList.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearList.Location = new Point(335, 81);
             btnClearList.Name = "btnClearList";
-            btnClearList.Size = new System.Drawing.Size(80, 23);
+            btnClearList.Size = new Size(75, 23);
             btnClearList.TabIndex = 6;
-            btnClearList.Text = "Clear";
+            btnClearList.Text = "Clear List";
             btnClearList.UseVisualStyleBackColor = true;
             btnClearList.Click += btnClearList_Click;
             // 
             // btnAddFromResources
             // 
-            btnAddFromResources.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnAddFromResources.Location = new System.Drawing.Point(354, 78);
+            btnAddFromResources.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnAddFromResources.Location = new Point(416, 81);
             btnAddFromResources.Name = "btnAddFromResources";
-            btnAddFromResources.Size = new System.Drawing.Size(160, 23);
-            btnAddFromResources.TabIndex = 7;
-            btnAddFromResources.Text = "Add from Resources...";
+            btnAddFromResources.Size = new Size(155, 23);
+            btnAddFromResources.TabIndex = 5;
+            btnAddFromResources.Text = "Add from Resources";
             btnAddFromResources.UseVisualStyleBackColor = true;
-            // Note: If you have an event handler for this in CustomSlodsForm.cs, uncomment the next line:
-            btnAddFromResources.Click += btnAddFromResources_Click; 
-            // Otherwise, we leave it without an event for now to avoid errors if the method is missing.
-            btnAddFromResources.Enabled = true; // Disabled by default since we didn't add logic for it in Slods
+            btnAddFromResources.Click += btnAddFromResources_Click;
             // 
             // txtMeshes
             // 
-            txtMeshes.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            txtMeshes.DetectUrls = false;
-            txtMeshes.Location = new System.Drawing.Point(12, 104);
+            txtMeshes.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtMeshes.BorderStyle = BorderStyle.FixedSingle;
+            txtMeshes.Location = new Point(15, 110);
             txtMeshes.Name = "txtMeshes";
-            txtMeshes.Size = new System.Drawing.Size(600, 240);
-            txtMeshes.TabIndex = 5;
+            txtMeshes.Size = new Size(637, 257);
+            txtMeshes.TabIndex = 7;
             txtMeshes.Text = "";
-            txtMeshes.WordWrap = false;
+            txtMeshes.Click += txtMeshes_Click;
+            txtMeshes.TextChanged += txtMeshes_TextChanged;
+            txtMeshes.KeyDown += txtMeshes_KeyDown;
+            txtMeshes.KeyUp += txtMeshes_KeyUp;
+            txtMeshes.MouseDown += txtMeshes_MouseDown;
             // 
             // btnSave
             // 
-            btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnSave.Location = new System.Drawing.Point(456, 511);
+            btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnSave.Location = new Point(471, 567);
             btnSave.Name = "btnSave";
-            btnSave.Size = new System.Drawing.Size(75, 27);
-            btnSave.TabIndex = 8;
-            btnSave.Text = "Save";
+            btnSave.Size = new Size(100, 30);
+            btnSave.TabIndex = 10;
+            btnSave.Text = "Save JSONs";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
             // btnClose
             // 
-            btnClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnClose.Location = new System.Drawing.Point(537, 511);
+            btnClose.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnClose.Location = new Point(576, 567);
             btnClose.Name = "btnClose";
-            btnClose.Size = new System.Drawing.Size(75, 27);
-            btnClose.TabIndex = 9;
+            btnClose.Size = new Size(76, 30);
+            btnClose.TabIndex = 11;
             btnClose.Text = "Close";
             btnClose.UseVisualStyleBackColor = true;
             btnClose.Click += btnClose_Click;
             // 
             // lblStatus
             // 
-            lblStatus.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            lblStatus.Location = new System.Drawing.Point(12, 514);
+            lblStatus.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblStatus.AutoSize = true;
+            lblStatus.Location = new Point(15, 582);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new System.Drawing.Size(438, 33);
-            lblStatus.TabIndex = 7;
+            lblStatus.Size = new Size(39, 15);
+            lblStatus.TabIndex = 9;
             lblStatus.Text = "Status";
             // 
             // grpObjOverride
             // 
-            grpObjOverride.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            grpObjOverride.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            grpObjOverride.Controls.Add(btnBrowseSourceOdr);
             grpObjOverride.Controls.Add(btnConvertOdrToObj);
             grpObjOverride.Controls.Add(btnConvertObjToOdr);
             grpObjOverride.Controls.Add(btnOpenIn3DPreview);
@@ -180,41 +186,48 @@ namespace GTA5ModdingUtilsGUI
             grpObjOverride.Controls.Add(lblOverrideObj);
             grpObjOverride.Controls.Add(txtSelectedArchetype);
             grpObjOverride.Controls.Add(lblSelectedArchetype);
-            grpObjOverride.Location = new System.Drawing.Point(12, 350);
+            grpObjOverride.Location = new Point(12, 373);
             grpObjOverride.Name = "grpObjOverride";
-            grpObjOverride.Size = new System.Drawing.Size(600, 150);
-            grpObjOverride.TabIndex = 6;
+            grpObjOverride.Size = new Size(640, 190);
+            grpObjOverride.TabIndex = 8;
             grpObjOverride.TabStop = false;
-            grpObjOverride.Text = "SLOD OBJ Override (selected line)";
+            grpObjOverride.Text = "OBJ Override (Selected line)";
+            // 
+            // btnBrowseSourceOdr
+            // 
+            btnBrowseSourceOdr.Location = new Point(416, 154);
+            btnBrowseSourceOdr.Name = "btnBrowseSourceOdr";
+            btnBrowseSourceOdr.Size = new Size(209, 27);
+            btnBrowseSourceOdr.TabIndex = 10;
+            btnBrowseSourceOdr.Text = "Select ODR File";
+            btnBrowseSourceOdr.UseVisualStyleBackColor = true;
+            btnBrowseSourceOdr.Click += btnBrowseSourceOdr_Click;
             // 
             // btnConvertOdrToObj
             // 
-            btnConvertOdrToObj.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnConvertOdrToObj.Location = new System.Drawing.Point(492, 110);
+            btnConvertOdrToObj.Location = new Point(526, 121);
             btnConvertOdrToObj.Name = "btnConvertOdrToObj";
-            btnConvertOdrToObj.Size = new System.Drawing.Size(98, 25);
+            btnConvertOdrToObj.Size = new Size(99, 27);
             btnConvertOdrToObj.TabIndex = 9;
-            btnConvertOdrToObj.Text = "ODR -> OBJ";
+            btnConvertOdrToObj.Text = "ODR->OBJ";
             btnConvertOdrToObj.UseVisualStyleBackColor = true;
             btnConvertOdrToObj.Click += btnConvertOdrToObj_Click;
             // 
             // btnConvertObjToOdr
             // 
-            btnConvertObjToOdr.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnConvertObjToOdr.Location = new System.Drawing.Point(390, 110);
+            btnConvertObjToOdr.Location = new Point(416, 121);
             btnConvertObjToOdr.Name = "btnConvertObjToOdr";
-            btnConvertObjToOdr.Size = new System.Drawing.Size(98, 25);
+            btnConvertObjToOdr.Size = new Size(104, 27);
             btnConvertObjToOdr.TabIndex = 8;
-            btnConvertObjToOdr.Text = "OBJ -> ODR";
+            btnConvertObjToOdr.Text = "OBJ->ODR";
             btnConvertObjToOdr.UseVisualStyleBackColor = true;
             btnConvertObjToOdr.Click += btnConvertObjToOdr_Click;
             // 
             // btnOpenIn3DPreview
             // 
-            btnOpenIn3DPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnOpenIn3DPreview.Location = new System.Drawing.Point(492, 80);
+            btnOpenIn3DPreview.Location = new Point(526, 88);
             btnOpenIn3DPreview.Name = "btnOpenIn3DPreview";
-            btnOpenIn3DPreview.Size = new System.Drawing.Size(98, 25);
+            btnOpenIn3DPreview.Size = new Size(99, 27);
             btnOpenIn3DPreview.TabIndex = 7;
             btnOpenIn3DPreview.Text = "3D Preview";
             btnOpenIn3DPreview.UseVisualStyleBackColor = true;
@@ -222,10 +235,9 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnOpenOverridesFolder
             // 
-            btnOpenOverridesFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnOpenOverridesFolder.Location = new System.Drawing.Point(390, 80);
+            btnOpenOverridesFolder.Location = new Point(416, 88);
             btnOpenOverridesFolder.Name = "btnOpenOverridesFolder";
-            btnOpenOverridesFolder.Size = new System.Drawing.Size(98, 25);
+            btnOpenOverridesFolder.Size = new Size(104, 27);
             btnOpenOverridesFolder.TabIndex = 6;
             btnOpenOverridesFolder.Text = "Open Folder";
             btnOpenOverridesFolder.UseVisualStyleBackColor = true;
@@ -233,10 +245,9 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnClearObjOverride
             // 
-            btnClearObjOverride.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnClearObjOverride.Location = new System.Drawing.Point(390, 50);
+            btnClearObjOverride.Location = new Point(416, 55);
             btnClearObjOverride.Name = "btnClearObjOverride";
-            btnClearObjOverride.Size = new System.Drawing.Size(200, 25);
+            btnClearObjOverride.Size = new Size(209, 27);
             btnClearObjOverride.TabIndex = 5;
             btnClearObjOverride.Text = "Clear Override";
             btnClearObjOverride.UseVisualStyleBackColor = true;
@@ -244,10 +255,9 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnImportObjOverride
             // 
-            btnImportObjOverride.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnImportObjOverride.Location = new System.Drawing.Point(390, 20);
+            btnImportObjOverride.Location = new Point(416, 22);
             btnImportObjOverride.Name = "btnImportObjOverride";
-            btnImportObjOverride.Size = new System.Drawing.Size(200, 25);
+            btnImportObjOverride.Size = new Size(209, 27);
             btnImportObjOverride.TabIndex = 4;
             btnImportObjOverride.Text = "Import OBJ Override...";
             btnImportObjOverride.UseVisualStyleBackColor = true;
@@ -255,68 +265,64 @@ namespace GTA5ModdingUtilsGUI
             // 
             // txtOverrideObjPath
             // 
-            txtOverrideObjPath.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            txtOverrideObjPath.Location = new System.Drawing.Point(74, 51);
+            txtOverrideObjPath.BackColor = Color.WhiteSmoke;
+            txtOverrideObjPath.Location = new Point(70, 49);
             txtOverrideObjPath.Name = "txtOverrideObjPath";
             txtOverrideObjPath.ReadOnly = true;
-            txtOverrideObjPath.Size = new System.Drawing.Size(300, 23);
+            txtOverrideObjPath.Size = new Size(328, 23);
             txtOverrideObjPath.TabIndex = 3;
             // 
             // lblOverrideObj
             // 
             lblOverrideObj.AutoSize = true;
-            lblOverrideObj.Location = new System.Drawing.Point(10, 54);
+            lblOverrideObj.Location = new Point(16, 52);
             lblOverrideObj.Name = "lblOverrideObj";
-            lblOverrideObj.Size = new System.Drawing.Size(30, 15);
+            lblOverrideObj.Size = new Size(27, 15);
             lblOverrideObj.TabIndex = 2;
-            lblOverrideObj.Text = "OBJ:";
+            lblOverrideObj.Text = "OBJ";
             // 
             // txtSelectedArchetype
             // 
-            txtSelectedArchetype.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            txtSelectedArchetype.Location = new System.Drawing.Point(74, 21);
+            txtSelectedArchetype.Location = new Point(70, 22);
             txtSelectedArchetype.Name = "txtSelectedArchetype";
             txtSelectedArchetype.ReadOnly = true;
-            txtSelectedArchetype.Size = new System.Drawing.Size(300, 23);
+            txtSelectedArchetype.Size = new Size(328, 23);
             txtSelectedArchetype.TabIndex = 1;
             // 
             // lblSelectedArchetype
             // 
             lblSelectedArchetype.AutoSize = true;
-            lblSelectedArchetype.Location = new System.Drawing.Point(10, 24);
+            lblSelectedArchetype.Location = new Point(16, 25);
             lblSelectedArchetype.Name = "lblSelectedArchetype";
-            lblSelectedArchetype.Size = new System.Drawing.Size(54, 15);
+            lblSelectedArchetype.Size = new Size(54, 15);
             lblSelectedArchetype.TabIndex = 0;
             lblSelectedArchetype.Text = "Selected:";
             // 
             // CustomSlodsForm
             // 
-            AcceptButton = btnSave;
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            CancelButton = btnClose;
-            ClientSize = new System.Drawing.Size(624, 550);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(664, 609);
             Controls.Add(grpObjOverride);
             Controls.Add(lblStatus);
             Controls.Add(btnClose);
             Controls.Add(btnSave);
             Controls.Add(txtMeshes);
-            Controls.Add(btnClearList);
             Controls.Add(btnAddFromResources);
+            Controls.Add(btnClearList);
             Controls.Add(lblMeshes);
             Controls.Add(btnBrowseConfig);
             Controls.Add(txtConfigPath);
             Controls.Add(lblConfigPath);
             Controls.Add(lblInfo);
-            MinimumSize = new System.Drawing.Size(640, 420);
+            MinimumSize = new Size(533, 525);
             Name = "CustomSlodsForm";
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Custom SLODs";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Custom SLODs Manager";
             grpObjOverride.ResumeLayout(false);
             grpObjOverride.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
-
         }
 
         #endregion
@@ -343,5 +349,6 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.Button btnConvertOdrToObj;
         private System.Windows.Forms.Button btnAddFromResources;
         private System.Windows.Forms.Button btnClearList;
+        private System.Windows.Forms.Button btnBrowseSourceOdr;
     }
 }

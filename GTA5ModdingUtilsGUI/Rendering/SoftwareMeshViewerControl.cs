@@ -5,16 +5,14 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.IO; // Added for file writing
 
 namespace GTA5ModdingUtilsGUI.Rendering
 {
-
-        /// <summary>
-        /// Extremely small software 3D viewer control. It is not meant to be fast,
-        /// just good enough to preview LOD meshes with their atlas textures.
-        /// </summary>
-        public class SoftwareMeshViewerControl : Control
+    /// <summary>
+    /// Extremely small software 3D viewer control. It is not meant to be fast,
+    /// just good enough to preview LOD meshes with their atlas textures.
+    /// </summary>
+    public class SoftwareMeshViewerControl : Control
     {
         /// <summary>
         /// Selection event raised when the user picks one or more faces in the 3D view.
@@ -37,8 +35,6 @@ namespace GTA5ModdingUtilsGUI.Rendering
             }
         }
 
-        // Global clipboard for copy/paste operations between windows
-        private static Mesh? _clipboardMesh;
         private Mesh? _mesh;
         private Bitmap? _texture;
         private Bitmap? _backBuffer;
@@ -141,7 +137,7 @@ namespace GTA5ModdingUtilsGUI.Rendering
         }
 
 
-        public float Yaw
+                public float Yaw
         {
             get => _yaw;
             set
@@ -184,7 +180,7 @@ namespace GTA5ModdingUtilsGUI.Rendering
             }
         }
 
-
+        
         /// <summary>
         /// Rebuilds adjacency structures used for expanding 3D picks into full
         /// face patches and their back‑side counterparts.
@@ -330,7 +326,7 @@ namespace GTA5ModdingUtilsGUI.Rendering
             return result;
         }
 
-        public SoftwareMeshViewerControl()
+public SoftwareMeshViewerControl()
         {
             DoubleBuffered = true;
             ResizeRedraw = true;
@@ -508,31 +504,31 @@ namespace GTA5ModdingUtilsGUI.Rendering
                 _backBuffer.UnlockBits(data);
             }
         }
-        private Matrix4x4 BuildViewMatrix(float distance)
-        {
-            // Z-up orbit camera:
-            //  - yaw   : azimuth around global Z (vertical) axis
-            //  - pitch : elevation (clamped) while keeping the camera "up" locked to +Z
-            //
-            // This keeps Z as the world up-axis (GTA-style) and prevents view roll so the
-            // top of the viewport remains aligned with +Z.
-            float cosPitch = MathF.Cos(_pitch);
-            float sinPitch = MathF.Sin(_pitch);
-            float cosYaw = MathF.Cos(_yaw);
-            float sinYaw = MathF.Sin(_yaw);
+private Matrix4x4 BuildViewMatrix(float distance)
+{
+    // Z-up orbit camera:
+    //  - yaw   : azimuth around global Z (vertical) axis
+    //  - pitch : elevation (clamped) while keeping the camera "up" locked to +Z
+    //
+    // This keeps Z as the world up-axis (GTA-style) and prevents view roll so the
+    // top of the viewport remains aligned with +Z.
+    float cosPitch = MathF.Cos(_pitch);
+    float sinPitch = MathF.Sin(_pitch);
+    float cosYaw = MathF.Cos(_yaw);
+    float sinYaw = MathF.Sin(_yaw);
 
-            // When yaw=0 and pitch=0, the camera sits on -Y looking toward the origin, with +Z as up.
-            Vector3 camPos = new Vector3(
-                distance * cosPitch * sinYaw,
-                -distance * cosPitch * cosYaw,
-                distance * sinPitch);
+    // When yaw=0 and pitch=0, the camera sits on -Y looking toward the origin, with +Z as up.
+    Vector3 camPos = new Vector3(
+        distance * cosPitch * sinYaw,
+        -distance * cosPitch * cosYaw,
+        distance * sinPitch);
 
-            return Matrix4x4.CreateLookAt(
-                camPos,
-                Vector3.Zero,
-                Vector3.UnitZ);
-        }
-        private Matrix4x4 BuildWorldViewProj(int width, int height)
+    return Matrix4x4.CreateLookAt(
+        camPos,
+        Vector3.Zero,
+        Vector3.UnitZ);
+}
+private Matrix4x4 BuildWorldViewProj(int width, int height)
         {
             if (_mesh == null)
                 return Matrix4x4.Identity;
@@ -719,31 +715,30 @@ namespace GTA5ModdingUtilsGUI.Rendering
             float sens = 0.01f;
 
             switch (_navGizmoDragAxis)
-            {
-                case NavGizmoAxis.X:
-                case NavGizmoAxis.Z:
-                    // Spin/orbit around the mesh without changing elevation (yaw only).
-                    // With a Z-up camera, this is a rotation around the global +Z axis.
-                    _yaw = _navGizmoStartYaw + dx * sens;
-                    Pitch = _navGizmoStartPitch;
-                    break;
+{
+    case NavGizmoAxis.X:
+    case NavGizmoAxis.Z:
+        // Spin/orbit around the mesh without changing elevation (yaw only).
+        // With a Z-up camera, this is a rotation around the global +Z axis.
+        _yaw = _navGizmoStartYaw + dx * sens;
+        Pitch = _navGizmoStartPitch;
+        break;
 
-                case NavGizmoAxis.Y:
-                    // Elevation change only (pitch only).
-                    _yaw = _navGizmoStartYaw;
-                    Pitch = _navGizmoStartPitch + (-dy * sens);
-                    break;
+    case NavGizmoAxis.Y:
+        // Elevation change only (pitch only).
+        _yaw = _navGizmoStartYaw;
+        Pitch = _navGizmoStartPitch + (-dy * sens);
+        break;
 
-                case NavGizmoAxis.None:
-                default:
-                    // Free orbit.
-                    _yaw = _navGizmoStartYaw + dx * sens;
-                    Pitch = _navGizmoStartPitch + (-dy * sens);
-                    break;
-            }
+    case NavGizmoAxis.None:
+    default:
+        // Free orbit.
+        _yaw = _navGizmoStartYaw + dx * sens;
+        Pitch = _navGizmoStartPitch + (-dy * sens);
+        break;
+}
 
-            Invalidate();
-        }
+Invalidate();}
 
         private void EndNavigationGizmoDrag()
         {
@@ -821,7 +816,7 @@ namespace GTA5ModdingUtilsGUI.Rendering
             public float VOverW;
         }
 
-
+        
         /// <summary>
         /// Very small CPU-side triangle picker. It mirrors the math used in <see cref="RenderMesh"/>
         /// to project vertices to screen space, then performs a barycentric hit test in that space
@@ -858,11 +853,11 @@ namespace GTA5ModdingUtilsGUI.Rendering
                 Matrix4x4.CreateScale(scale);
 
             var view = BuildViewMatrix(distance);
-            var proj = Matrix4x4.CreatePerspectiveFieldOfView(
-                            fovRad,
-                            aspect,
-                            0.1f,
-                            1000.0f);
+var proj = Matrix4x4.CreatePerspectiveFieldOfView(
+                fovRad,
+                aspect,
+                0.1f,
+                1000.0f);
 
             var worldViewProj = world * view * proj;
 
@@ -970,11 +965,11 @@ namespace GTA5ModdingUtilsGUI.Rendering
                 Matrix4x4.CreateScale(scale);
 
             var view = BuildViewMatrix(distance);
-            var proj = Matrix4x4.CreatePerspectiveFieldOfView(
-                            fovRad,
-                            aspect,
-                            0.1f,
-                            1000.0f);
+var proj = Matrix4x4.CreatePerspectiveFieldOfView(
+                fovRad,
+                aspect,
+                0.1f,
+                1000.0f);
 
             var worldViewProj = world * view * proj;
 
@@ -1091,8 +1086,8 @@ namespace GTA5ModdingUtilsGUI.Rendering
                         }
                     }
 
-                    // Intentionally no transform gizmo in the 3D preview.
-                    // (Selection transforms are handled in the 2D UV/texture view.)
+					// Intentionally no transform gizmo in the 3D preview.
+					// (Selection transforms are handled in the 2D UV/texture view.)
                 }
 
                 return;
@@ -1205,7 +1200,7 @@ namespace GTA5ModdingUtilsGUI.Rendering
                     if (depth >= _depthBuffer[idx]) continue;
                     _depthBuffer[idx] = depth;
 
-
+                    
                     float uOverW = w0 * v0.UOverW + w1 * v1.UOverW + w2 * v2.UOverW;
                     float vOverW = w0 * v0.VOverW + w1 * v1.VOverW + w2 * v2.VOverW;
 
@@ -1260,7 +1255,7 @@ namespace GTA5ModdingUtilsGUI.Rendering
             }
         }
 
-
+        
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
@@ -1393,110 +1388,6 @@ namespace GTA5ModdingUtilsGUI.Rendering
             {
                 _wireframe = !_wireframe;
                 Invalidate();
-            }
-            // DELETE: Remove selected faces
-            else if (e.KeyCode == Keys.Delete)
-            {
-                DeleteSelection();
-            }
-            // CTRL+C: Copy selected faces
-            else if (e.Control && e.KeyCode == Keys.C)
-            {
-                CopySelection();
-            }
-            // CTRL+V: Paste faces from clipboard
-            else if (e.Control && e.KeyCode == Keys.V)
-            {
-                PasteFromClipboard();
-            }
-        }
-
-        private void DeleteSelection()
-        {
-            if (_mesh == null || _selectedVertexIndices.Count == 0)
-                return;
-
-            _mesh.DeleteVertices(_selectedVertexIndices);
-
-            // Clear selection since the vertices are gone
-            _selectedVertexIndices.Clear();
-
-            // Rebuild adjacency because the topology changed
-            RebuildSelectionAdjacency();
-
-            // Notify listener (UV editor) that selection is empty
-            MeshSelectionChanged?.Invoke(this, new MeshSelectionEventArgs(new List<int>(), false));
-
-            Invalidate();
-        }
-
-        private void CopySelection()
-        {
-            if (_mesh == null || _selectedVertexIndices.Count == 0)
-                return;
-
-            // Create a new mesh from the selected faces and store in static clipboard
-            _clipboardMesh = _mesh.CloneSubset(_selectedVertexIndices);
-        }
-
-        private void PasteFromClipboard()
-        {
-            if (_mesh == null || _clipboardMesh == null)
-                return;
-
-            _mesh.Append(_clipboardMesh);
-
-            // Topology changed, so we must rebuild helpers
-            RebuildSelectionAdjacency();
-            Invalidate();
-        }
-
-        /// <summary>
-        /// Exports the current mesh to a Wavefront OBJ file.
-        /// Useful for saving edits (like deleted vertices) back to disk.
-        /// </summary>
-        /// <param name="path">The full file path to save the .obj to.</param>
-        public void SaveToObj(string path)
-        {
-            if (_mesh == null)
-                return;
-
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(path))
-                {
-                    writer.WriteLine("# Exported from GTA5ModdingUtilsGUI 3D Preview");
-                    writer.WriteLine($"# Vertices: {_mesh.Vertices.Length}");
-                    writer.WriteLine($"# Faces: {_mesh.Indices.Length / 3}");
-
-                    // Write Vertices
-                    // Note: We flip V (1.0 - y) to match the import transformation in LodMapCreator.py
-                    foreach (var v in _mesh.Vertices)
-                    {
-                        writer.WriteLine($"v {v.Position.X:F6} {v.Position.Y:F6} {v.Position.Z:F6}");
-                        writer.WriteLine($"vn {v.Normal.X:F6} {v.Normal.Y:F6} {v.Normal.Z:F6}");
-                        writer.WriteLine($"vt {v.TexCoord.X:F6} {1.0f - v.TexCoord.Y:F6}");
-                    }
-
-                    // Write Faces
-                    int[] indices = _mesh.Indices;
-                    for (int i = 0; i < indices.Length; i += 3)
-                    {
-                        // OBJ indices are 1-based
-                        int i0 = indices[i] + 1;
-                        int i1 = indices[i + 1] + 1;
-                        int i2 = indices[i + 2] + 1;
-
-                        // f v/vt/vn
-                        writer.WriteLine($"f {i0}/{i0}/{i0} {i1}/{i1}/{i1} {i2}/{i2}/{i2}");
-                    }
-                }
-
-                MessageBox.Show($"Successfully exported OBJ to:\n{path}", "Export Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to save OBJ: {ex.Message}", "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

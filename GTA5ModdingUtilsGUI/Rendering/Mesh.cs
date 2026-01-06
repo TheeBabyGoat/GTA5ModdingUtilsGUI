@@ -16,7 +16,6 @@ namespace GTA5ModdingUtilsGUI.Rendering
         public struct Vertex
         {
             public Vector3 Position;
-            public Vector3 Normal;
             public Vector2 TexCoord;
         }
 
@@ -31,137 +30,6 @@ namespace GTA5ModdingUtilsGUI.Rendering
         /// </summary>
         public void RecalculateBoundsPublic()
         {
-            RecalculateBounds();
-        }
-
-        /// <summary>
-        /// Deletes the specified vertices and any faces connected to them.
-        /// </summary>
-        public void DeleteVertices(HashSet<int> vertexIndicesToDelete)
-        {
-            if (vertexIndicesToDelete == null || vertexIndicesToDelete.Count == 0)
-                return;
-
-            // 1. Identify faces to keep (all 3 vertices must NOT be in the delete list)
-            var facesToKeep = new List<int>();
-            for (int i = 0; i < Indices.Length; i += 3)
-            {
-                int i0 = Indices[i];
-                int i1 = Indices[i + 1];
-                int i2 = Indices[i + 2];
-
-                if (!vertexIndicesToDelete.Contains(i0) &&
-                    !vertexIndicesToDelete.Contains(i1) &&
-                    !vertexIndicesToDelete.Contains(i2))
-                {
-                    facesToKeep.Add(i0);
-                    facesToKeep.Add(i1);
-                    facesToKeep.Add(i2);
-                }
-            }
-
-            // 2. Rebuild Vertices array and create a map from OldIndex -> NewIndex
-            var oldToNewIndex = new Dictionary<int, int>();
-            var newVertices = new List<Vertex>();
-
-            for (int i = 0; i < Vertices.Length; i++)
-            {
-                if (!vertexIndicesToDelete.Contains(i))
-                {
-                    oldToNewIndex[i] = newVertices.Count;
-                    newVertices.Add(Vertices[i]);
-                }
-            }
-
-            // 3. Rebuild Indices array using the new vertex indices
-            var newIndices = new List<int>();
-            foreach (int oldIdx in facesToKeep)
-            {
-                if (oldToNewIndex.TryGetValue(oldIdx, out int newIdx))
-                {
-                    newIndices.Add(newIdx);
-                }
-            }
-
-            // 4. Update mesh data
-            Vertices = newVertices.ToArray();
-            Indices = newIndices.ToArray();
-            RecalculateBounds();
-        }
-
-        /// <summary>
-        /// Creates a new Mesh containing only the faces that are fully selected.
-        /// </summary>
-        public Mesh CloneSubset(HashSet<int> vertexIndicesToClone)
-        {
-            // Identify faces where ALL vertices are in the selection
-            var facesToClone = new List<int>();
-            for (int i = 0; i < Indices.Length; i += 3)
-            {
-                int i0 = Indices[i];
-                int i1 = Indices[i + 1];
-                int i2 = Indices[i + 2];
-
-                if (vertexIndicesToClone.Contains(i0) &&
-                    vertexIndicesToClone.Contains(i1) &&
-                    vertexIndicesToClone.Contains(i2))
-                {
-                    facesToClone.Add(i0);
-                    facesToClone.Add(i1);
-                    facesToClone.Add(i2);
-                }
-            }
-
-            if (facesToClone.Count == 0)
-                return new Mesh(); // Empty mesh
-
-            // Map old indices to new 0..N range
-            var oldToNew = new Dictionary<int, int>();
-            var newVerts = new List<Vertex>();
-            var newIndices = new List<int>();
-
-            foreach (int oldIdx in facesToClone)
-            {
-                if (!oldToNew.ContainsKey(oldIdx))
-                {
-                    oldToNew[oldIdx] = newVerts.Count;
-                    newVerts.Add(Vertices[oldIdx]);
-                }
-                newIndices.Add(oldToNew[oldIdx]);
-            }
-
-            var m = new Mesh
-            {
-                Vertices = newVerts.ToArray(),
-                Indices = newIndices.ToArray()
-            };
-            m.RecalculateBounds();
-            return m;
-        }
-
-        /// <summary>
-        /// Merges another mesh into this one.
-        /// </summary>
-        public void Append(Mesh other)
-        {
-            if (other == null || other.Vertices.Length == 0) return;
-
-            int baseIndex = Vertices.Length;
-
-            var combinedVerts = new Vertex[Vertices.Length + other.Vertices.Length];
-            Array.Copy(Vertices, 0, combinedVerts, 0, Vertices.Length);
-            Array.Copy(other.Vertices, 0, combinedVerts, Vertices.Length, other.Vertices.Length);
-
-            var combinedIndices = new int[Indices.Length + other.Indices.Length];
-            Array.Copy(Indices, 0, combinedIndices, 0, Indices.Length);
-
-            for (int i = 0; i < other.Indices.Length; i++)
-            {
-                combinedIndices[Indices.Length + i] = other.Indices[i] + baseIndex;
-            }
-
-            Vertices = combinedVerts;
-            Indices = combinedIndices;
             RecalculateBounds();
         }
 
@@ -273,6 +141,15 @@ namespace GTA5ModdingUtilsGUI.Rendering
             return mesh;
         }
 
+        /// <summary>
+        /// Saves this mesh to a Wavefront OBJ file, writing the current in-memory
+        /// UVs (<c>vt</c>) and positions (<c>v</c>). Faces are emitted using the
+        /// mesh's current index buffer as triangles.
+        /// </summary>
+        /// <remarks>
+        /// This exporter is intentionally simple (no normals/materials/groups) and
+        /// is only used for the GUI preview / UV editor.
+        /// </remarks>
         public void SaveToObj(string path, string? objectName = null)
         {
             if (path is null) throw new ArgumentNullException(nameof(path));
@@ -316,6 +193,7 @@ namespace GTA5ModdingUtilsGUI.Rendering
 
         private static string SanitizeObjName(string name)
         {
+            // OBJ names are whitespace-separated; replace whitespace with underscores.
             var chars = name.Trim().ToCharArray();
             for (int i = 0; i < chars.Length; i++)
             {

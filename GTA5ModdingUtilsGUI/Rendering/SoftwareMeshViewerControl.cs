@@ -35,6 +35,8 @@ namespace GTA5ModdingUtilsGUI.Rendering
             }
         }
 
+        // Global clipboard for copy/paste operations between windows
+        private static Mesh? _clipboardMesh;
         private Mesh? _mesh;
         private Bitmap? _texture;
         private Bitmap? _backBuffer;
@@ -1389,9 +1391,64 @@ var proj = Matrix4x4.CreatePerspectiveFieldOfView(
                 _wireframe = !_wireframe;
                 Invalidate();
             }
+            // DELETE: Remove selected faces
+            else if (e.KeyCode == Keys.Delete)
+            {
+                DeleteSelection();
+            }
+            // CTRL+C: Copy selected faces
+            else if (e.Control && e.KeyCode == Keys.C)
+            {
+                CopySelection();
+            }
+            // CTRL+V: Paste faces from clipboard
+            else if (e.Control && e.KeyCode == Keys.V)
+            {
+                PasteFromClipboard();
+            }
         }
 
-        protected override void Dispose(bool disposing)
+        private void DeleteSelection()
+        {
+            if (_mesh == null || _selectedVertexIndices.Count == 0)
+                return;
+
+            _mesh.DeleteVertices(_selectedVertexIndices);
+
+            // Clear selection since the vertices are gone
+            _selectedVertexIndices.Clear();
+
+            // Rebuild adjacency because the topology changed
+            RebuildSelectionAdjacency();
+
+            // Notify listener (UV editor) that selection is empty
+            MeshSelectionChanged?.Invoke(this, new MeshSelectionEventArgs(new List<int>(), false));
+
+            Invalidate();
+        }
+
+        private void CopySelection()
+        {
+            if (_mesh == null || _selectedVertexIndices.Count == 0)
+                return;
+
+            // Create a new mesh from the selected faces and store in static clipboard
+            _clipboardMesh = _mesh.CloneSubset(_selectedVertexIndices);
+        }
+
+        private void PasteFromClipboard()
+        {
+            if (_mesh == null || _clipboardMesh == null)
+                return;
+
+            _mesh.Append(_clipboardMesh);
+
+            // Topology changed, so we must rebuild helpers
+            RebuildSelectionAdjacency();
+            Invalidate();
+        }
+   
+protected override void Dispose(bool disposing)
         {
             if (disposing)
             {

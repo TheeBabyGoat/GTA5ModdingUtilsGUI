@@ -40,6 +40,9 @@ namespace GTA5ModdingUtilsGUI
             btnClose = new Button();
             lblStatus = new Label();
             grpObjOverride = new GroupBox();
+            chkPreviewSourceOdr = new CheckBox();
+            lblSourceOdr = new Label();
+            txtSourceOdrPath = new TextBox();
             btnBrowseSourceOdr = new Button();
             btnConvertOdrToObj = new Button();
             btnConvertObjToOdr = new Button();
@@ -175,6 +178,9 @@ namespace GTA5ModdingUtilsGUI
             // grpObjOverride
             // 
             grpObjOverride.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            grpObjOverride.Controls.Add(chkPreviewSourceOdr);
+            grpObjOverride.Controls.Add(lblSourceOdr);
+            grpObjOverride.Controls.Add(txtSourceOdrPath);
             grpObjOverride.Controls.Add(btnBrowseSourceOdr);
             grpObjOverride.Controls.Add(btnConvertOdrToObj);
             grpObjOverride.Controls.Add(btnConvertObjToOdr);
@@ -193,19 +199,47 @@ namespace GTA5ModdingUtilsGUI
             grpObjOverride.TabStop = false;
             grpObjOverride.Text = "OBJ Override (Selected line)";
             // 
+            // chkPreviewSourceOdr
+            // 
+            chkPreviewSourceOdr.AutoSize = true;
+            chkPreviewSourceOdr.Location = new Point(70, 110);
+            chkPreviewSourceOdr.Name = "chkPreviewSourceOdr";
+            chkPreviewSourceOdr.Size = new Size(132, 19);
+            chkPreviewSourceOdr.TabIndex = 13;
+            chkPreviewSourceOdr.Text = "Preview Selected ODR";
+            chkPreviewSourceOdr.UseVisualStyleBackColor = true;
+            // 
+            // lblSourceOdr
+            // 
+            lblSourceOdr.AutoSize = true;
+            lblSourceOdr.Location = new Point(16, 83);
+            lblSourceOdr.Name = "lblSourceOdr";
+            lblSourceOdr.Size = new Size(33, 15);
+            lblSourceOdr.TabIndex = 12;
+            lblSourceOdr.Text = "ODR";
+            // 
+            // txtSourceOdrPath
+            // 
+            txtSourceOdrPath.BackColor = Color.WhiteSmoke;
+            txtSourceOdrPath.Location = new Point(70, 80);
+            txtSourceOdrPath.Name = "txtSourceOdrPath";
+            txtSourceOdrPath.ReadOnly = true;
+            txtSourceOdrPath.Size = new Size(328, 23);
+            txtSourceOdrPath.TabIndex = 11;
+            // 
             // btnBrowseSourceOdr
             // 
-            btnBrowseSourceOdr.Location = new Point(416, 154);
+            btnBrowseSourceOdr.Location = new Point(416, 80);
             btnBrowseSourceOdr.Name = "btnBrowseSourceOdr";
             btnBrowseSourceOdr.Size = new Size(209, 27);
             btnBrowseSourceOdr.TabIndex = 10;
-            btnBrowseSourceOdr.Text = "Select ODR File";
+            btnBrowseSourceOdr.Text = "Select ODR File...";
             btnBrowseSourceOdr.UseVisualStyleBackColor = true;
             btnBrowseSourceOdr.Click += btnBrowseSourceOdr_Click;
             // 
             // btnConvertOdrToObj
             // 
-            btnConvertOdrToObj.Location = new Point(526, 121);
+            btnConvertOdrToObj.Location = new Point(526, 146);
             btnConvertOdrToObj.Name = "btnConvertOdrToObj";
             btnConvertOdrToObj.Size = new Size(99, 27);
             btnConvertOdrToObj.TabIndex = 9;
@@ -215,7 +249,7 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnConvertObjToOdr
             // 
-            btnConvertObjToOdr.Location = new Point(416, 121);
+            btnConvertObjToOdr.Location = new Point(416, 146);
             btnConvertObjToOdr.Name = "btnConvertObjToOdr";
             btnConvertObjToOdr.Size = new Size(104, 27);
             btnConvertObjToOdr.TabIndex = 8;
@@ -225,7 +259,7 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnOpenIn3DPreview
             // 
-            btnOpenIn3DPreview.Location = new Point(526, 88);
+            btnOpenIn3DPreview.Location = new Point(526, 113);
             btnOpenIn3DPreview.Name = "btnOpenIn3DPreview";
             btnOpenIn3DPreview.Size = new Size(99, 27);
             btnOpenIn3DPreview.TabIndex = 7;
@@ -235,7 +269,7 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnOpenOverridesFolder
             // 
-            btnOpenOverridesFolder.Location = new Point(416, 88);
+            btnOpenOverridesFolder.Location = new Point(416, 113);
             btnOpenOverridesFolder.Name = "btnOpenOverridesFolder";
             btnOpenOverridesFolder.Size = new Size(104, 27);
             btnOpenOverridesFolder.TabIndex = 6;
@@ -245,7 +279,7 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnClearObjOverride
             // 
-            btnClearObjOverride.Location = new Point(416, 55);
+            btnClearObjOverride.Location = new Point(416, 51);
             btnClearObjOverride.Name = "btnClearObjOverride";
             btnClearObjOverride.Size = new Size(209, 27);
             btnClearObjOverride.TabIndex = 5;
@@ -255,7 +289,7 @@ namespace GTA5ModdingUtilsGUI
             // 
             // btnImportObjOverride
             // 
-            btnImportObjOverride.Location = new Point(416, 22);
+            btnImportObjOverride.Location = new Point(416, 20);
             btnImportObjOverride.Name = "btnImportObjOverride";
             btnImportObjOverride.Size = new Size(209, 27);
             btnImportObjOverride.TabIndex = 4;
@@ -350,5 +384,8 @@ namespace GTA5ModdingUtilsGUI
         private System.Windows.Forms.Button btnAddFromResources;
         private System.Windows.Forms.Button btnClearList;
         private System.Windows.Forms.Button btnBrowseSourceOdr;
+        private System.Windows.Forms.Label lblSourceOdr;
+        private System.Windows.Forms.TextBox txtSourceOdrPath;
+        private System.Windows.Forms.CheckBox chkPreviewSourceOdr;
     }
 }

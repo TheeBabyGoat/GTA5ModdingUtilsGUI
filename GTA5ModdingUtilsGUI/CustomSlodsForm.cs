@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.ComponentModel; // Required for Win32Exception
 
 namespace GTA5ModdingUtilsGUI
 {
@@ -70,6 +71,19 @@ namespace GTA5ModdingUtilsGUI
             if (lblStatus != null)
             {
                 lblStatus.ForeColor = accentColor;
+            }
+
+            // Ensure the GroupBox text matches the theme
+            if (grpObjOverride != null)
+            {
+                grpObjOverride.ForeColor = textColor;
+            }
+
+            // New Inputs
+            if (txtSourceOdrPath != null)
+            {
+                txtSourceOdrPath.BackColor = palette.InputBack;
+                txtSourceOdrPath.ForeColor = textColor;
             }
 
             // Primary action buttons
@@ -420,57 +434,85 @@ namespace GTA5ModdingUtilsGUI
         private void btnOpenIn3DPreview_Click(object sender, EventArgs e)
         {
             string arch = txtSelectedArchetype.Text.Trim();
-            if (string.IsNullOrEmpty(arch)) return;
+            if (string.IsNullOrEmpty(arch)) arch = "Preview";
 
+            string safeArch = string.Join("_", arch.Split(Path.GetInvalidFileNameChars()));
             string objPath = "";
+            bool isTempConvert = false;
 
-            if (!string.IsNullOrEmpty(txtOverrideObjPath.Text))
+            // 1. Resolve OBJ Path (Check Temp Conversion first)
+            if (chkPreviewSourceOdr.Checked && !string.IsNullOrEmpty(txtSourceOdrPath.Text))
             {
-                string fullPath = Path.Combine(_toolRoot, txtOverrideObjPath.Text);
-                if (File.Exists(fullPath)) objPath = fullPath;
+                if (File.Exists(txtSourceOdrPath.Text))
+                {
+                    string tempDir = Path.Combine(_toolRoot, "temp_preview");
+                    Directory.CreateDirectory(tempDir);
+                    string tempObj = Path.Combine(tempDir, safeArch + "_preview.obj");
+
+                    bool success = ConvertOdrToObj(txtSourceOdrPath.Text, tempObj, silent: false);
+                    if (success && File.Exists(tempObj))
+                    {
+                        objPath = tempObj;
+                        isTempConvert = true;
+                    }
+                    else return; // Conversion failed
+                }
             }
 
-            if (string.IsNullOrEmpty(objPath) &&
-                _lastConvertedObjArchetype == arch &&
-                !string.IsNullOrEmpty(_lastConvertedObjPath) &&
-                File.Exists(_lastConvertedObjPath))
+            // 2. Fallback: Check overrides or last converted file
+            if (string.IsNullOrEmpty(objPath))
             {
-                objPath = _lastConvertedObjPath;
+                if (!string.IsNullOrEmpty(txtOverrideObjPath.Text))
+                {
+                    string fullPath = Path.Combine(_toolRoot, txtOverrideObjPath.Text);
+                    if (File.Exists(fullPath)) objPath = fullPath;
+                }
+
+                if (string.IsNullOrEmpty(objPath) &&
+                    _lastConvertedObjArchetype == arch &&
+                    !string.IsNullOrEmpty(_lastConvertedObjPath) &&
+                    File.Exists(_lastConvertedObjPath))
+                {
+                    objPath = _lastConvertedObjPath;
+                }
             }
 
             if (string.IsNullOrEmpty(objPath))
             {
-                MessageBox.Show("No OBJ found to preview.\n\n1. Import an OBJ override,\nOR\n2. Select an ODR file and click 'Convert ODR->OBJ'.", "Preview Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("No OBJ found to preview.\n\n1. Check 'Preview Selected ODR' and select an ODR,\n2. Import an OBJ override,\nOR\n3. Select an ODR file and click 'Convert ODR->OBJ'.", "Preview Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            using (var viewForm = new Form())
+            // 3. Open the Standard Preview Form (LodAtlasPreviewForm)
+            try
             {
-                viewForm.Text = $"3D Preview - {arch}";
-                viewForm.Size = new Size(800, 600);
-
-                if (_palette != null)
+                using (var preview = new LodAtlasPreviewForm())
                 {
-                    viewForm.BackColor = _palette.WindowBack;
-                    viewForm.ForeColor = _palette.TextColor;
-                }
+                    // Attempt to list other OBJs in the same folder (for easy browsing)
+                    try
+                    {
+                        var folder = Path.GetDirectoryName(objPath);
+                        if (!string.IsNullOrEmpty(folder))
+                        {
+                            preview.TryPopulateMeshListFromFolder(folder);
+                        }
+                    }
+                    catch { }
 
-                var viewer = new GTA5ModdingUtilsGUI.Rendering.SoftwareMeshViewerControl();
-                viewer.Dock = DockStyle.Fill;
-                viewForm.Controls.Add(viewer);
-
-                try
-                {
-                    var mesh = GTA5ModdingUtilsGUI.Rendering.Mesh.LoadFromObj(objPath);
-                    viewer.Mesh = mesh;
+                    // Open the target mesh
+                    preview.TryOpenMeshFromPath(objPath);
+                    preview.ShowDialog(this);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Failed to load mesh: " + ex.Message);
-                    return;
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open 3D preview: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
-                viewForm.ShowDialog();
+            // Cleanup temp file after preview closes
+            if (isTempConvert)
+            {
+                try { File.Delete(objPath); } catch { }
             }
         }
 
@@ -479,21 +521,27 @@ namespace GTA5ModdingUtilsGUI
             string arch = txtSelectedArchetype.Text.Trim();
             if (string.IsNullOrEmpty(arch)) return;
 
-            string[] searchPaths = {
-                Path.Combine(_toolRoot, "generated", "custom_slods", "slod1", arch + ".odr"),
-                Path.Combine(_toolRoot, "generated", "custom_slods", "slod2", arch + ".odr"),
-                Path.Combine(_toolRoot, "generated", "custom_slods", "slod3", arch + ".odr"),
-                Path.Combine(_toolRoot, "generated", "custom_slods", "slod4", arch + ".odr"),
-                Path.Combine(_toolRoot, "generated", "custom_meshes", arch + ".odr")
-            };
+            string sourceOdr = txtSourceOdrPath.Text.Trim();
 
-            string sourceOdr = "";
-            foreach (var p in searchPaths)
+            // If text box empty, look in default paths
+            if (string.IsNullOrEmpty(sourceOdr))
             {
-                if (File.Exists(p)) { sourceOdr = p; break; }
+                string[] searchPaths = {
+                    Path.Combine(_toolRoot, "generated", "custom_slods", "slod1", arch + ".odr"),
+                    Path.Combine(_toolRoot, "generated", "custom_slods", "slod2", arch + ".odr"),
+                    Path.Combine(_toolRoot, "generated", "custom_slods", "slod3", arch + ".odr"),
+                    Path.Combine(_toolRoot, "generated", "custom_slods", "slod4", arch + ".odr"),
+                    Path.Combine(_toolRoot, "generated", "custom_meshes", arch + ".odr")
+                };
+
+                foreach (var p in searchPaths)
+                {
+                    if (File.Exists(p)) { sourceOdr = p; break; }
+                }
             }
 
-            if (string.IsNullOrEmpty(sourceOdr))
+            // If still empty, browse
+            if (string.IsNullOrEmpty(sourceOdr) || !File.Exists(sourceOdr))
             {
                 using (OpenFileDialog ofd = new OpenFileDialog())
                 {
@@ -502,19 +550,9 @@ namespace GTA5ModdingUtilsGUI
                     if (ofd.ShowDialog() == DialogResult.OK)
                     {
                         sourceOdr = ofd.FileName;
+                        txtSourceOdrPath.Text = sourceOdr;
                     }
                     else return;
-                }
-            }
-
-            string script = Path.Combine(_toolRoot, "odr_to_obj.py");
-            if (!File.Exists(script))
-            {
-                script = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "odr_to_obj.py");
-                if (!File.Exists(script))
-                {
-                    MessageBox.Show("odr_to_obj.py script not found.");
-                    return;
                 }
             }
 
@@ -522,9 +560,10 @@ namespace GTA5ModdingUtilsGUI
             Directory.CreateDirectory(outDir);
             string outObj = Path.Combine(outDir, arch + ".obj");
 
-            RunPythonScript(script, $"\"{sourceOdr}\" \"{outObj}\"");
+            // Explicit conversion click -> always show errors (silent=false)
+            bool success = ConvertOdrToObj(sourceOdr, outObj, silent: false);
 
-            if (File.Exists(outObj))
+            if (success)
             {
                 lblStatus.Text = "Converted ODR -> OBJ";
                 _lastConvertedObjPath = outObj;
@@ -542,10 +581,52 @@ namespace GTA5ModdingUtilsGUI
                     Process.Start("explorer.exe", "/select,\"" + outObj + "\"");
                 }
             }
-            else
+        }
+
+        private bool ConvertOdrToObj(string inputOdr, string outputObj, bool silent)
+        {
+            string script = Path.Combine(_toolRoot, "odr_to_obj.py");
+            if (!File.Exists(script))
             {
-                MessageBox.Show("Conversion failed (output file not created).");
+                // Fallback: check "Python Toolkit" subfolder
+                script = Path.Combine(_toolRoot, "Python Toolkit", "odr_to_obj.py");
             }
+
+            if (!File.Exists(script))
+            {
+                script = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "odr_to_obj.py");
+                if (!File.Exists(script))
+                {
+                    if (!silent) MessageBox.Show("odr_to_obj.py script not found.\nExpected in root or 'Python Toolkit' folder.", "Script Missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+
+            // Check for the .mesh file before running script
+            try
+            {
+                string odrText = File.ReadAllText(inputOdr);
+                Match m = Regex.Match(odrText, @"\b([^\s{}]+\.mesh)\b", RegexOptions.IgnoreCase);
+                if (m.Success)
+                {
+                    string meshName = m.Groups[1].Value;
+                    string meshPath = Path.Combine(Path.GetDirectoryName(inputOdr) ?? "", meshName);
+                    if (!File.Exists(meshPath))
+                    {
+                        if (!silent)
+                        {
+                            MessageBox.Show($"The ODR file references a mesh file that is missing:\n\n{meshName}\n\nExpected at:\n{meshPath}\n\nPlease ensure the .odr and .mesh files are in the same folder.",
+                                "Missing Mesh File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        return false;
+                    }
+                }
+            }
+            catch { }
+
+            // PASS NAMED ARGUMENTS --odr and --outObj
+            RunPythonScript(script, $"--odr \"{inputOdr}\" --outObj \"{outputObj}\"", silent);
+            return File.Exists(outputObj);
         }
 
         private void btnConvertObjToOdr_Click(object sender, EventArgs e)
@@ -570,6 +651,12 @@ namespace GTA5ModdingUtilsGUI
             string script = Path.Combine(_toolRoot, "OpenFormatObjConverter.py");
             if (!File.Exists(script))
             {
+                // Fallback
+                script = Path.Combine(_toolRoot, "Python Toolkit", "OpenFormatObjConverter.py");
+            }
+
+            if (!File.Exists(script))
+            {
                 script = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OpenFormatObjConverter.py");
                 if (!File.Exists(script))
                 {
@@ -583,39 +670,65 @@ namespace GTA5ModdingUtilsGUI
                 fbd.Description = "Select output folder for ODR";
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
-                    RunPythonScript(script, $"\"{fullObjPath}\" \"{fbd.SelectedPath}\" \"{arch}\"");
+                    RunPythonScript(script, $"\"{fullObjPath}\" \"{fbd.SelectedPath}\" \"{arch}\"", silent: false);
                     lblStatus.Text = "Ran OBJ -> ODR conversion.";
                 }
             }
         }
 
-        private void RunPythonScript(string scriptPath, string args)
+        private void RunPythonScript(string scriptPath, string args, bool silent)
         {
-            try
+            string[] pythonCommands = { "python", "py", "python3" };
+            string lastError = "";
+
+            foreach (var pyCmd in pythonCommands)
             {
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = "python";
-                psi.Arguments = $"\"{scriptPath}\" {args}";
-                psi.UseShellExecute = false;
-                psi.CreateNoWindow = true;
-                psi.RedirectStandardOutput = true;
-                psi.RedirectStandardError = true;
-
-                using (Process p = Process.Start(psi))
+                try
                 {
-                    string outText = p.StandardOutput.ReadToEnd();
-                    string errText = p.StandardError.ReadToEnd();
-                    p.WaitForExit();
+                    ProcessStartInfo psi = new ProcessStartInfo();
+                    psi.FileName = pyCmd;
+                    psi.Arguments = $"\"{scriptPath}\" {args}";
+                    psi.UseShellExecute = false;
+                    psi.CreateNoWindow = true;
+                    psi.RedirectStandardOutput = true;
+                    psi.RedirectStandardError = true;
+                    psi.WorkingDirectory = Path.GetDirectoryName(scriptPath);
 
-                    if (p.ExitCode != 0)
+                    using (Process p = Process.Start(psi))
                     {
-                        MessageBox.Show($"Script Error:\n{errText}\n\nOutput:\n{outText}", "Python Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        string outText = p.StandardOutput.ReadToEnd();
+                        string errText = p.StandardError.ReadToEnd();
+                        p.WaitForExit();
+
+                        if (p.ExitCode != 0)
+                        {
+                            if (!silent)
+                            {
+                                MessageBox.Show($"Script Error (Code {p.ExitCode}):\n{errText}\n\nOutput:\n{outText}", "Python Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                        return;
                     }
                 }
+                catch (Win32Exception ex)
+                {
+                    lastError = ex.Message;
+                }
+                catch (Exception ex)
+                {
+                    if (!silent) MessageBox.Show("Unexpected error: " + ex.Message);
+                    return;
+                }
             }
-            catch (Exception ex)
+
+            if (!silent)
             {
-                MessageBox.Show("Failed to run python: " + ex.Message);
+                MessageBox.Show(
+                    "Could not find a valid Python installation.\n\n" +
+                    "Tried: python, py, python3\n" +
+                    "System Error: " + lastError + "\n\n" +
+                    "Please verify that Python is installed and 'Add to PATH' was checked during installation.",
+                    "Python Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -634,7 +747,11 @@ namespace GTA5ModdingUtilsGUI
                     string filename = Path.GetFileNameWithoutExtension(ofd.FileName);
                     txtSelectedArchetype.Text = filename;
                     RefreshOverrideInfo(filename);
-                    lblStatus.Text = $"Selected '{filename}' from {Path.GetFileName(ofd.FileName)}";
+
+                    // Update the new ODR Text Box
+                    txtSourceOdrPath.Text = ofd.FileName;
+
+                    lblStatus.Text = $"Selected '{filename}'";
                 }
             }
         }

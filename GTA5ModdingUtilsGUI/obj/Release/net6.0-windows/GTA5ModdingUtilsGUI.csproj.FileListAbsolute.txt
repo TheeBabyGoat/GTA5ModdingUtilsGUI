@@ -15,6 +15,7 @@ C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Rele
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.LodAtlasPreviewForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.MainForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.Rendering.SoftwareMeshViewerControl.resources
+C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.SelectArchetypesForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.TextureAnchorEditorForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.TextureCreationForm.resources
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.csproj.GenerateResource.cache
@@ -27,4 +28,3 @@ C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Rele
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.pdb
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.genruntimeconfig.cache
 C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\ref\GTA5ModdingUtilsGUI.dll
-C:\Users\Crush\source\repos\GTA5ModdingUtilsGUI-1.4\GTA5ModdingUtilsGUI\obj\Release\net6.0-windows\GTA5ModdingUtilsGUI.SelectArchetypesForm.resources

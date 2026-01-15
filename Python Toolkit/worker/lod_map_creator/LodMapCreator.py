@@ -1777,6 +1777,7 @@ class LodMapCreator:
     def createSlodModel(self, name: str, slodLevel: int, drawableDictionary: str, entities: list[EntityItem], parentIndex: int, numChildren: int, mapPrefix: str) -> EntityItem:
         self.foundSlod = True
 
+        # Existing buckets for Billboard generation
         verticesFront = {}
         sizesFront = {}
         textureUVsFront = {}
@@ -1785,12 +1786,44 @@ class LodMapCreator:
         textureUVsTop = {}
         bbox = {}
 
+        # New buckets for Custom Mesh Overrides
+        groupToVertices = {}
+        groupToNormals = {}
+        groupToTextureUVs = {}
+        groupToIndices = {}
+        groupKeyToSampler = {}
+
         maxHdEntityLodDistance = 0
 
         for entity in entities:
             maxHdEntityLodDistance = max(maxHdEntityLodDistance, entity.lodDistance)
 
-            uvMap = self.slodCandidates[entity.archetypeName]
+            # 1. Check for Custom OBJ Override first
+            # If an override exists for this archetype (e.g. from custom_mesh_overrides.json), use it.
+            override_key = entity.archetypeName.lower()
+            if self._append_custom_override_mesh_if_present(
+                entity, 
+                groupToVertices, 
+                groupToNormals, 
+                groupToTextureUVs, 
+                groupToIndices, 
+                groupKey=override_key, 
+                groupKeyToSampler=groupKeyToSampler
+            ):
+                # We successfully added a custom mesh for this entity.
+                # Initialize its bounding box tracker if not present
+                if override_key not in bbox:
+                    bbox[override_key] = Box.createReversedInfinityBox()
+                # Note: We defer precise bounding box calculation for overrides to the end
+                # to avoid recalculating per-vertex here.
+                continue
+
+            # 2. Fallback to Billboard Generation
+            uvMap = self.slodCandidates.get(entity.archetypeName)
+            
+            # If no candidate and no override, skip
+            if uvMap is None:
+                continue
 
             diffuseSampler = uvMap.getDiffuseSampler()
 
@@ -1828,6 +1861,7 @@ class LodMapCreator:
 
         totalBoundingGeometry = BoundingGeometry()
 
+        # Add Billboard Bounds
         for diffuseSampler in verticesTop:
             totalBoundingGeometry.extendByPoints(verticesTop[diffuseSampler])
 
@@ -1838,6 +1872,10 @@ class LodMapCreator:
                 minVertex = np.subtract(verticesFront[diffuseSampler][i], size3D).tolist()
                 maxVertex = np.add(verticesFront[diffuseSampler][i], size3D).tolist()
                 totalBoundingGeometry.extendByPoints([minVertex, maxVertex])
+
+        # Add Override Bounds
+        for key in groupToVertices:
+            totalBoundingGeometry.extendByPoints(groupToVertices[key])
 
         totalBoundingSphere = totalBoundingGeometry.getSphere()
         center = totalBoundingSphere.center
@@ -1851,10 +1889,13 @@ class LodMapCreator:
         shaders = ""
         geometries = ""
         shaderIndex = 0
+        
+        # --- GENERATE BILLBOARD GEOMETRIES (Shader: LOD2) ---
         for diffuseSampler in verticesFront:
             numFrontPlanes = len(verticesFront[diffuseSampler])
             indicesFront = self.createIndicesForRectangles(numFrontPlanes)
 
+            # Billboards use bbox per sampler
             bbox[diffuseSampler] = bbox[diffuseSampler].getTranslated(translation)
             verticesFrontStr = LodMapCreator.convertVerticesTextureUVsAsStrForSlod(verticesFront[diffuseSampler], sizesFront[diffuseSampler], textureUVsFront[diffuseSampler], translation)
 
@@ -1889,6 +1930,34 @@ class LodMapCreator:
                     .replace("${VERTICES.NUM}", str(len(verticesTop[diffuseSampler]))) \
                     .replace("${VERTICES}\n", verticesTopStr)
                 shaderIndex += 1
+
+        # --- GENERATE OVERRIDE GEOMETRIES (Shader: LOD) ---
+        for key in groupToVertices:
+            sampler = groupKeyToSampler.get(key, f"slod_{key}")
+            
+            # Use the standard LOD shader for overrides (supports standard vertex format)
+            shaders += self.contentTemplateOdrShaderTreeLod.replace("${DIFFUSE_SAMPLER}", sampler)
+            
+            indices = groupToIndices[key]
+            
+            # Calculate specific bounds for this override group
+            g_bg = BoundingGeometry(groupToVertices[key])
+            g_bbox = g_bg.getBox().getTranslated(translation)
+            bounds += self.createAabb(g_bbox)
+            
+            verticesNormalsTextureUVsStr = LodMapCreator.convertVerticesNormalsTextureUVsAsStr(
+                groupToVertices[key], groupToNormals[key], groupToTextureUVs[key], translation
+            )
+
+            geometries += self.contentTemplateMeshGeometry \
+                .replace("${SHADER_INDEX}", str(shaderIndex)) \
+                .replace("${VERTEX_DECLARATION}", self.VERTEX_DECLARATION_TREE_LOD) \
+                .replace("${INDICES.NUM}", str(len(indices))) \
+                .replace("${INDICES}", self.createIndicesStr(indices)) \
+                .replace("${VERTICES.NUM}", str(len(groupToVertices[key]))) \
+                .replace("${VERTICES}\n", verticesNormalsTextureUVsStr)
+            
+            shaderIndex += 1
 
         contentModelMesh = self.contentTemplateMesh \
             .replace("${BOUNDS}\n", bounds) \

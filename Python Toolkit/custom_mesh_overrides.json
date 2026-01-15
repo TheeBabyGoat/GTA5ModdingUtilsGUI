@@ -1,8 +1,4 @@
 {
-  "cypress_01a": {
-    "obj": "custom_mesh_overrides/cypress_01a.obj",
-    "diffuseSampler": "lod_cypress_01a"
-  },
   "cypress_01b": {
     "obj": "custom_mesh_overrides/cypress_01b.obj",
     "diffuseSampler": "lod_cypress_01b"
@@ -22,5 +18,8 @@
   "cypress_03a": {
     "obj": "custom_mesh_overrides/cypress_03a.obj",
     "diffuseSampler": "lod_cypress_03a"
+  },
+  "cypress_01a": {
+    "obj": "custom_mesh_overrides\\cypress_01a.obj"
   }
 }
